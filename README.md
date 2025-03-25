@@ -7,7 +7,7 @@ Este repositório é dedicado ao projeto de Banco de Dados desenvolvido para o c
 - **Luiz Felipe Arruda** – [lfpa@cesar.school](mailto:lfpa@cesar.school)  
 - **Felipe Bandeira** – [fbq@cesar.school](mailto:fbq@cesar.school)
 
-## 📄 Minimundo
+## 📄 Mini-mundo
 
 O documento com o minimundo do projeto pode ser acessado no link abaixo:  
 🔗 [Minimundo – Casa Clima Comércios](https://docs.google.com/document/d/1QDJin0GYfJ47yMUTsJpFgqpG8ybHs2u_uXQVPM3K15s/edit?tab=t.0)
