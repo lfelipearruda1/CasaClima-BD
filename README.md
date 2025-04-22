@@ -11,3 +11,8 @@ Este repositório é dedicado ao projeto de Banco de Dados desenvolvido para o c
 
 O documento com o mini-mundo do projeto pode ser acessado no link abaixo:  
 🔗 [Minimundo – Casa Clima Comércios](https://docs.google.com/document/d/1QDJin0GYfJ47yMUTsJpFgqpG8ybHs2u_uXQVPM3K15s/edit?tab=t.0)
+
+## 📄 Relatório versão 1.0
+
+O nosos relatório 1.0 pode ser acessado no link abaixo:
+🔗 [Relatório versão 1.0 – Casa Clima Comércios](https://docs.google.com/document/d/1aezIG8luJpsKRJpq6celfyzoo9KCzS-o_6Iu2eX8aWE/edit?tab=t.0).
