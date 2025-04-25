@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Casa Clima - Loja</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        header { display: flex; justify-content: space-between; align-items: center; }
+        .produtos { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 40px;}
+        .produto { border: 1px solid #ccc; border-radius: 8px; padding: 20px; width: 200px; }
+        .botoes, #navegacao { display: flex; gap: 12px; align-items: center; }
+        button { padding: 8px 16px; }
+        .perfil-icon {
+            display: inline-block; 
+            width: 32px; 
+            height: 32px; 
+            background: #efefef;
+            border-radius: 50%; 
+            text-align: center; 
+            line-height: 32px; 
+            font-size: 21px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Casa Clima</h1>
+        <div id="navegacao">
+        </div>
+    </header>
+    <h2>Produtos em Destaque</h2>
+    <div class="produtos" id="lista-produtos">
+    </div>
+
+    <script>
+        fetch('/api/produtos')
+            .then(resp => resp.json())
+            .then(produtos => {
+                let lista = document.getElementById('lista-produtos');
+                lista.innerHTML = "";
+                produtos.forEach(produto => {
+                    let div = document.createElement('div');
+                    div.className = 'produto';
+                    div.innerHTML = `
+                        <strong>${produto.nome}</strong><br>
+                        <small>${produto.marca}</small><br>
+                        ${produto.descricao ? `<span>${produto.descricao}</span><br>` : ''}
+                        <span>Capacidade: ${produto.capacidade}</span><br>
+                        <span><b>Preço: R$ ${produto.preco.toFixed(2)}</b></span>
+                    `;
+                    lista.appendChild(div);
+                });
+            })
+            .catch(err => {
+                document.getElementById('lista-produtos').innerText = "Erro ao carregar produtos!";
+                console.error(err);
+            });
+
+        function atualizarNavegacao() {
+            const user = localStorage.getItem("clienteLogado");
+            const nav = document.getElementById("navegacao");
+            if (user) {
+                const cliente = JSON.parse(user);
+                nav.innerHTML = `
+                    <button onclick="window.location.href='perfil.html'" class="perfil-btn" style="background:none;border:none;cursor:pointer;">
+                        <span class="perfil-icon">👤</span>
+                        <span>Olá, ${cliente.nome.split(' ')[0]}</span>
+                    </button>
+                    <button onclick="deslogar()">Sair</button>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <button onclick="window.location.href='login.html'">Login</button>
+                    <button onclick="window.location.href='cadastro.html'">Cadastro</button>
+                `;
+            }
+        }
+        function deslogar() {
+            localStorage.removeItem("clienteLogado");
+            window.location.reload();
+        }
+        atualizarNavegacao();
+    </script>
+</body>
+</html>

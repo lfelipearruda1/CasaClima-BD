@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Casa Clima - Área dos Funcionários</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        header { display: flex; justify-content: space-between; align-items: center; }
+        .area-func {
+            font-size: 1em;
+            color: #3775ca;
+            font-weight: bold;
+            background: #ecf4ff;
+            padding: 5px 14px;
+            border-radius: 8px;
+            margin-left: 18px;
+        }
+        .produtos { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 40px;}
+        .produto { border: 1px solid #ccc; border-radius: 8px; padding: 20px; width: 200px; }
+        .botoes, #navegacao { display: flex; gap: 12px; align-items: center; }
+        button { padding: 8px 16px; cursor: pointer; }
+        .perfil-icon {
+            display: inline-block; 
+            width: 32px; 
+            height: 32px; 
+            background: #efefef;
+            border-radius: 50%; 
+            text-align: center; 
+            line-height: 32px; 
+            font-size: 21px;
+            margin-right: 5px;
+        }
+        .edit-link {
+            color: #265ac2;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-right: 12px;
+            font-size: 1em;
+        }
+        .delete-link {
+            color: #d34646;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 1em;
+        }
+        .admin-section {
+            margin-top: 50px;
+            background: #f7fafd;
+            border-radius: 10px;
+            padding: 22px;
+            border: 1px solid #bedaff;
+            box-shadow: 0 1px 8px #b2c3ee22;
+        }
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .admin-title {
+            font-size: 1.2em;
+            color: #265ac2;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .add-btn {
+            border: none;
+            background: #4682fa;
+            color: #fff;
+            font-size: 1em;
+            border-radius: 50px;
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .add-btn:hover {
+            background: #2a3596;
+        }
+        .admin-lista-vazia {
+            color: #5991d6;
+            font-style: italic;
+            padding: 18px 0 4px 0;
+            text-align: center;
+        }
+        .admin-produto {
+            border: 1px solid #bedaff;
+            border-radius: 6px;
+            padding: 13px 15px;
+            margin-bottom: 11px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .admin-produto-nome {
+            font-size: 1.13em; font-weight: bold; color: #265ac2;
+        }
+        .admin-produto-meta {
+            font-size: 0.93em; color: #555;
+        }
+        #produtoForm {
+            display: none;
+            margin-top: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        #produtoForm.active { display: grid; }
+        #produtoForm label {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9em;
+        }
+        #produtoForm h4 { grid-column: span 2; margin: 0 0 10px 0; }
+        #produtoForm button[type="submit"], #produtoForm button[type="button"] { margin-top: 10px; }
+        #produtoForm button[type="submit"] { grid-column: 1; }
+        #produtoForm button[type="button"] { grid-column: 2; margin-left: 0; }
+        #msg-prod { grid-column: span 2; margin-top: 10px; color: #265ac2; }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display:flex;align-items:center;">
+            <h1>Casa Clima</h1>
+            <span class="area-func">Área dos Funcionários</span>
+        </div>
+        <div id="navegacao"></div>
+    </header>
+
+    <h2>Produtos em Destaque</h2>
+    <div class="produtos" id="lista-produtos"></div>
+
+    <section class="admin-section">
+        <div class="admin-header">
+            <span class="admin-title">
+                <span style="font-size:1.3em;">🗂️</span>
+                Gerenciar Produtos
+            </span>
+            <button class="add-btn" id="showAddProduct" title="Adicionar Produto">+</button>
+        </div>
+        <div id="admin-lista"></div>
+        <form id="produtoForm">
+            <h4 id="formTitle">Novo Produto</h4>
+            <label>Nome:<input type="text" id="prod-nome" required></label>
+            <label>Descrição:<input type="text" id="prod-desc"></label>
+            <label>Capacidade:<input type="text" id="prod-capa"></label>
+            <label>Preço (R$):<input type="number" id="prod-preco" step="0.01" required></label>
+            <label>Marca:<input type="text" id="prod-marca"></label>
+            <button type="submit" id="produtoFormSubmit">Cadastrar</button>
+            <button type="button" id="prod-cancel">Cancelar</button>
+            <div id="msg-prod"></div>
+        </form>
+    </section>
+
+    <script>
+        let produtoEditando = null;
+
+        let funcionario = localStorage.getItem("funcionarioLogado");
+        if (!funcionario) { window.location.href = "login-funcionario.html"; }
+        else { funcionario = JSON.parse(funcionario); }
+
+        document.getElementById("navegacao").innerHTML = `
+            <button class="edit-link" onclick="alert('Aqui você pode implementar a edição do perfil!')">
+                <span class="perfil-icon">👤</span>
+                Olá, ${funcionario.nome.split(' ')[0]}
+            </button>
+            <button onclick="localStorage.removeItem('funcionarioLogado');window.location.href='login-funcionario.html'">Sair</button>
+        `;
+
+        fetch('/api/produtos')
+            .then(resp => resp.json())
+            .then(produtos => {
+                let lista = document.getElementById('lista-produtos');
+                lista.innerHTML = "";
+                produtos.forEach(produto => {
+                    let div = document.createElement('div');
+                    div.className = 'produto';
+                    div.innerHTML = `
+                        <strong>${produto.nome}</strong><br>
+                        <small>${produto.marca}</small><br>
+                        ${produto.descricao ? `<span>${produto.descricao}</span><br>` : ''}
+                        <span>Capacidade: ${produto.capacidade}</span><br>
+                        <span><b>Preço: R$ ${produto.preco.toFixed(2)}</b></span>
+                    `;
+                    lista.appendChild(div);
+                });
+            })
+            .catch(() => { document.getElementById('lista-produtos').innerText = "Erro ao carregar produtos!"; });
+
+        function renderAdminLista() {
+            fetch('/api/produtos')
+                .then(resp => resp.json())
+                .then(produtos => {
+                    const lista = document.getElementById("admin-lista");
+                    if (!produtos.length) {
+                        lista.innerHTML = '<div class="admin-lista-vazia">Nenhum produto cadastrado.</div>';
+                    } else {
+                        lista.innerHTML = produtos.map(produto => `
+                            <div class="admin-produto">
+                                <div class="admin-info">
+                                    <span class="admin-produto-nome">${produto.nome}</span>
+                                    <span class="admin-produto-meta">${produto.marca} - ${produto.capacidade} - R$ ${produto.preco.toFixed(2)}</span>
+                                    <span class="admin-produto-meta">${produto.descricao || ''}</span>
+                                </div>
+                                <div>
+                                    <button class="edit-link" type="button" onclick="editarProduto(${produto.codigo})">Editar</button>
+                                    <button class="delete-link" type="button" onclick="excluirProduto(${produto.codigo})">Excluir</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                })
+                .catch(() => {
+                    document.getElementById("admin-lista").innerHTML =
+                        '<div class="admin-lista-vazia">Erro ao carregar os produtos.</div>';
+                });
+        }
+        renderAdminLista();
+
+        document.getElementById("showAddProduct").onclick = function () {
+            produtoEditando = null;
+            document.getElementById("produtoForm").classList.add('active');
+            document.getElementById("showAddProduct").style.display = "none";
+            document.getElementById("formTitle").innerText = "Novo Produto";
+            document.getElementById("produtoFormSubmit").innerText = "Cadastrar";
+            document.getElementById("prod-nome").value = '';
+            document.getElementById("prod-desc").value = '';
+            document.getElementById("prod-capa").value = '';
+            document.getElementById("prod-preco").value = '';
+            document.getElementById("prod-marca").value = '';
+            document.getElementById("msg-prod").innerText = "";
+            setTimeout(() => document.getElementById("prod-nome").focus(), 200);
+        };
+        document.getElementById("prod-cancel").onclick = function () {
+            document.getElementById("produtoForm").reset();
+            document.getElementById("produtoForm").classList.remove('active');
+            document.getElementById("showAddProduct").style.display = "inline-flex";
+            document.getElementById("msg-prod").innerText = "";
+            produtoEditando = null;
+        };
+
+        document.getElementById("produtoForm").onsubmit = function (e) {
+            e.preventDefault();
+            const prod = {
+                nome: document.getElementById("prod-nome").value,
+                descricao: document.getElementById("prod-desc").value,
+                capacidade: document.getElementById("prod-capa").value,
+                preco: parseFloat(document.getElementById("prod-preco").value),
+                marca: document.getElementById("prod-marca").value
+            };
+
+            if (!prod.nome || !prod.preco) {
+                document.getElementById("msg-prod").innerText = "Preencha nome e preço!";
+                return;
+            }
+
+            let method = "POST";
+            let sucessoMsg = "Produto cadastrado com sucesso!";
+            if (produtoEditando) {
+                prod.codigo = produtoEditando; 
+                method = "PUT";
+                sucessoMsg = "Produto alterado com sucesso!";
+            }
+
+            fetch('/api/produtos', {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(prod)
+            })
+            .then(r => r.json())
+            .then(resp => {
+                if (resp && (resp.ok === true || !resp.error || resp.codigo || resp.nome)) {
+                    document.getElementById("msg-prod").innerText = sucessoMsg;
+                    document.getElementById("produtoForm").reset();
+                    renderAdminLista();
+                    setTimeout(() => {
+                        document.getElementById("produtoForm").classList.remove('active');
+                        document.getElementById("showAddProduct").style.display = "inline-flex";
+                        document.getElementById("msg-prod").innerText = "";
+                        produtoEditando = null;
+                    }, 1200);
+                } else {
+                    let msg = "Erro ao salvar!";
+                    if(resp && resp.error){
+                        msg += " " + resp.error;
+                    }
+                    document.getElementById("msg-prod").innerText = msg;
+                }
+            })
+            .catch((err) => {
+                document.getElementById("msg-prod").innerText = "Erro de conexão.";
+            });
+        };
+
+        window.editarProduto = function (codigo) {
+            fetch(`/api/produtos/${codigo}`)
+                .then(resp => resp.json())
+                .then(produto => {
+                    document.getElementById("prod-nome").value = produto.nome || '';
+                    document.getElementById("prod-desc").value = produto.descricao || '';
+                    document.getElementById("prod-capa").value = produto.capacidade || '';
+                    document.getElementById("prod-preco").value = produto.preco || '';
+                    document.getElementById("prod-marca").value = produto.marca || '';
+                    produtoEditando = codigo;
+                    document.getElementById("produtoForm").classList.add('active');
+                    document.getElementById("showAddProduct").style.display = "none";
+                    document.getElementById("formTitle").innerText = "Editar Produto";
+                    document.getElementById("produtoFormSubmit").innerText = "Salvar";
+                    document.getElementById("msg-prod").innerText = "";
+                    setTimeout(() => document.getElementById("prod-nome").focus(), 200);
+                })
+                .catch(() => alert("Erro ao carregar dados do produto!"));
+        };
+
+        window.excluirProduto = function (codigo) {
+            if (confirm("Deseja mesmo excluir esse produto?")) {
+                fetch(`/api/produtos/${codigo}`, { method: 'DELETE' })
+                    .then(resp => resp.json())
+                    .then(resp => {
+                        if (resp && (!resp.error || resp.ok || resp.sucesso)) {
+                            renderAdminLista();
+                            document.getElementById("produtoForm").classList.remove('active');
+                            document.getElementById("showAddProduct").style.display = "inline-flex";
+                            produtoEditando = null;
+                        } else {
+                            alert("Erro ao excluir produto: " + (resp && resp.error ? resp.error : ""));
+                        }
+                    })
+                    .catch(() => alert("Erro ao excluir produto."));
+            }
+        };
+    </script>
+</body>
+</html>
