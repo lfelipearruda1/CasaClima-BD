@@ -19,6 +19,20 @@ public class ProdutoDAO {
         return db.query("SELECT * FROM Produto", new BeanPropertyRowMapper<>(Produto.class));
     }
 
+    public List<Produto> listarAtivos() {
+        return db.query("SELECT * FROM Produto WHERE ativo = true", new BeanPropertyRowMapper<>(Produto.class));
+    }
+
+    public boolean desativar(int codigo) {
+        String sql = "UPDATE Produto SET ativo = false WHERE codigo = ?";
+        return db.update(sql, codigo) > 0;
+    }
+
+    public boolean ativar(int codigo) {
+        String sql = "UPDATE Produto SET ativo = true WHERE codigo = ?";
+        return db.update(sql, codigo) > 0;
+    }
+
     public Produto buscarPorCodigo(int codigo) {
         return db.queryForObject(
             "SELECT * FROM Produto WHERE codigo = ?",

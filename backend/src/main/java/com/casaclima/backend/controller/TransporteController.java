@@ -31,7 +31,7 @@ public class TransporteController {
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable int id) {
+    public void deletar(@PathVariable("id") int id) {
         dao.deletar(id);
     }
 }

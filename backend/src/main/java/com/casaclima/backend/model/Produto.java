@@ -7,6 +7,8 @@ public class Produto {
     private String capacidade;
     private double preco;
     private String marca;
+    private Boolean ativo;
+
 
     public int getCodigo() { return codigo; }
     public void setCodigo(int codigo) { this.codigo = codigo; }
@@ -25,4 +27,7 @@ public class Produto {
 
     public String getMarca() { return marca; }
     public void setMarca(String marca) { this.marca = marca; }
+
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 }

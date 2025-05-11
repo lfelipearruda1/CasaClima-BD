@@ -47,6 +47,17 @@
             text-decoration: underline;
             font-size: 1em;
         }
+        .toggle-link {
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-right: 12px;
+            font-size: 1em;
+        }
+        .toggle-link.desativar { color: #b85c04; }
+        .toggle-link.ativar { color: #267c18; }
         .admin-section {
             margin-top: 50px;
             background: #f7fafd;
@@ -98,6 +109,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .admin-produto.inativo {
+            background: #ececec;
+            opacity: 0.6;
         }
         .admin-info {
             display: flex;
@@ -177,7 +193,7 @@
             <button onclick="localStorage.removeItem('funcionarioLogado');window.location.href='login-funcionario.html'">Sair</button>
         `;
 
-        fetch('/api/produtos')
+        fetch('/api/produtos/ativos')
             .then(resp => resp.json())
             .then(produtos => {
                 let lista = document.getElementById('lista-produtos');
@@ -206,7 +222,7 @@
                         lista.innerHTML = '<div class="admin-lista-vazia">Nenhum produto cadastrado.</div>';
                     } else {
                         lista.innerHTML = produtos.map(produto => `
-                            <div class="admin-produto">
+                            <div class="admin-produto${produto.ativo === false ? " inativo" : ""}">
                                 <div class="admin-info">
                                     <span class="admin-produto-nome">${produto.nome}</span>
                                     <span class="admin-produto-meta">${produto.marca} - ${produto.capacidade} - R$ ${produto.preco.toFixed(2)}</span>
@@ -215,6 +231,12 @@
                                 <div>
                                     <button class="edit-link" type="button" onclick="editarProduto(${produto.codigo})">Editar</button>
                                     <button class="delete-link" type="button" onclick="excluirProduto(${produto.codigo})">Excluir</button>
+                                    ${
+                                        produto.ativo === false ?
+                                        `<button class="toggle-link ativar" type="button" onclick="reativarProduto(${produto.codigo})">Reativar</button>`
+                                        :
+                                        `<button class="toggle-link desativar" type="button" onclick="desativarProduto(${produto.codigo})">Desativar</button>`
+                                    }
                                 </div>
                             </div>
                         `).join('');
@@ -337,6 +359,34 @@
                         }
                     })
                     .catch(() => alert("Erro ao excluir produto."));
+            }
+        };
+
+        window.desativarProduto = function(codigo) {
+            if (confirm("Deseja desativar este produto? Ele ficará oculto para os clientes!")) {
+                fetch(`/api/produtos/${codigo}/desativar`, { method: 'PATCH' })
+                    .then(resp => {
+                        if (resp.ok) {
+                            renderAdminLista();
+                        } else {
+                            alert("Erro ao desativar o produto.");
+                        }
+                    })
+                    .catch(() => alert("Erro de rede ao desativar produto."));
+            }
+        };
+
+        window.reativarProduto = function(codigo) {
+            if (confirm("Deseja reativar este produto? Ele ficará visível novamente na loja!")) {
+                fetch(`/api/produtos/${codigo}/ativar`, { method: 'PATCH' })
+                    .then(resp => {
+                        if (resp.ok) {
+                            renderAdminLista();
+                        } else {
+                            alert("Erro ao ativar o produto.");
+                        }
+                    })
+                    .catch(() => alert("Erro de rede ao ativar produto."));
             }
         };
     </script>

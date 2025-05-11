@@ -34,7 +34,7 @@
     </div>
 
     <script>
-        fetch('/api/produtos')
+        fetch('/api/produtos/ativos')
             .then(resp => resp.json())
             .then(produtos => {
                 let lista = document.getElementById('lista-produtos');
