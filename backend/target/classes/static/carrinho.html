@@ -89,9 +89,11 @@
         }
 
         function finalizar() {
-            alert(`Compra finalizada com ${carrinho.length} produto(s).`);
-            localStorage.removeItem('carrinho');
-            renderCarrinho();
+            if (carrinho.length === 0) {
+                alert("Seu carrinho está vazio.");
+                return;
+            }
+            window.location.href = 'finalizar_compra.html';
         }
 
         renderCarrinho();

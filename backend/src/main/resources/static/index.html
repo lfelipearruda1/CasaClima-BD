@@ -43,12 +43,10 @@
 <body>
     <header>
         <h1>Casa Clima</h1>
-        <div id="navegacao">
-        </div>
+        <div id="navegacao"></div>
     </header>
     <h2>Produtos em Destaque</h2>
-    <div class="produtos" id="lista-produtos">
-    </div>
+    <div class="produtos" id="lista-produtos"></div>
 
     <script>
         fetch('/api/produtos/ativos')
@@ -79,15 +77,17 @@
         function atualizarNavegacao() {
             const user = localStorage.getItem("clienteLogado");
             const nav = document.getElementById("navegacao");
-            let carrinhoCount = 0;
-            try {
-                const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-                carrinhoCount = carrinho.reduce((soma, item) => soma + (item.qtd || 1), 0);
-            } catch(e) {}
-            let carrinhoBtn = `<a href="carrinho.html" class="carrinho-link">🛒 Carrinho (<span id="carrinho-count">${carrinhoCount}</span>)</a>`;
+            let conteudoNav = "";
+
             if (user) {
                 const cliente = JSON.parse(user);
-                nav.innerHTML = `
+                let carrinhoCount = 0;
+                try {
+                    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+                    carrinhoCount = carrinho.reduce((soma, item) => soma + (item.qtd || 1), 0);
+                } catch(e) {}
+                let carrinhoBtn = `<a href="carrinho.html" class="carrinho-link">🛒 Carrinho (<span id="carrinho-count">${carrinhoCount}</span>)</a>`;
+                conteudoNav = `
                     <button onclick="window.location.href='perfil.html'" class="perfil-btn" style="background:none;border:none;cursor:pointer;">
                         <span class="perfil-icon">👤</span>
                         <span>Olá, ${cliente.nome.split(' ')[0]}</span>
@@ -96,20 +96,22 @@
                     <button onclick="deslogar()">Sair</button>
                 `;
             } else {
-                nav.innerHTML = `
-                    ${carrinhoBtn}
+                conteudoNav = `
                     <button onclick="window.location.href='login.html'">Login</button>
                     <button onclick="window.location.href='cadastro.html'">Cadastro</button>
                 `;
             }
+
+            nav.innerHTML = conteudoNav;
         }
+
         function deslogar() {
             localStorage.removeItem("clienteLogado");
             window.location.reload();
         }
+
         atualizarNavegacao();
 
-        // Atualiza contador de carrinho ao adicionar (útil se usar em páginas dinâmicas)
         window.addEventListener("storage", function(e){
             if(e.key === "carrinho" && document.getElementById("carrinho-count")){
                 try {

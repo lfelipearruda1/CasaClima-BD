@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Finalizar Compra</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 24px; }
+        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #bedaff; }
+        tfoot td { font-weight: bold; }
+        .form-box { max-width: 600px; margin: 40px 0; }
+        label { display: block; margin-top: 12px; }
+        input { width: calc(100% - 16px); padding: 8px; margin-top: 2px; }
+        .payment-options { margin-top: 20px; }
+        button { padding: 10px 20px; background-color: #285abc; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Finalizar Compra</h1>
+    <div id="resumoCompra"></div>
+
+    <div class="form-box" id="enderecoForm">
+        <h3>Detalhes do Endereço:</h3>
+        <label>CEP:<br><input type="text" id="cep" maxlength="8" onblur="buscarCEP()"></label>
+        <label>Rua:<br><input type="text" id="rua"></label>
+        <label>Número:<br><input type="number" id="numero"></label>
+        <label>Cidade:<br><input type="text" id="cidade"></label>
+        <label>Bairro:<br><input type="text" id="bairro"></label>
+    </div>
+
+    <div class="payment-options">
+        <h3>Escolha o Método de Pagamento:</h3>
+        <label><input type="radio" name="metodoPagamento" value="Cartão de Crédito" required> Cartão de Crédito</label>
+        <label><input type="radio" name="metodoPagamento" value="Boleto"> Boleto</label>
+        <label><input type="radio" name="metodoPagamento" value="PIX"> PIX</label>
+    </div>
+    
+    <button onclick="confirmarCompra()">Confirmar Compra</button>
+
+    <script>
+        let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderResumoCompra();
+        });
+
+        function renderResumoCompra() {
+            const resumoContainer = document.getElementById("resumoCompra");
+            if (!carrinho.length) {
+                resumoContainer.innerHTML = '<div>Seu carrinho está vazio.</div>';
+                return;
+            }
+
+            let total = 0;
+            let html = `<table>
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Qtd</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+            carrinho.forEach(item => {
+                const subtotal = item.qtd * item.preco;
+                total += subtotal;
+                html += `<tr>
+                            <td>
+                                <strong>${item.nome}</strong><br>
+                                ${item.marca ? `<small>Marca: ${item.marca}</small><br>` : ''}
+                                ${item.descricao ? `<small>Descrição: ${item.descricao}</small><br>` : ''}
+                                ${item.capacidade ? `<small>Capacidade: ${item.capacidade}</small><br>` : ''}
+                                <small>Preço unitário: R$ ${item.preco.toFixed(2)}</small>
+                            </td>
+                            <td>${item.qtd}</td>
+                            <td>R$ ${subtotal.toFixed(2)}</td>
+                        </tr>`;
+            });
+
+            html += `</tbody>
+                     <tfoot>
+                        <tr>
+                            <td colspan="2">Total</td>
+                            <td>R$ ${total.toFixed(2)}</td>
+                        </tr>
+                     </tfoot>
+                    </table>`;
+
+            resumoContainer.innerHTML = html;
+        }
+
+        function buscarCEP() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+
+            if (cep.length === 8) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('rua').value = data.logradouro;
+                            document.getElementById('bairro').value = data.bairro;
+                            document.getElementById('cidade').value = data.localidade;
+                        } else {
+                            alert("CEP inválido. Por favor, verifique e tente novamente.");
+                        }
+                    })
+                    .catch(() => alert("Erro ao buscar CEP. Tente novamente mais tarde."));
+            } else {
+                alert("CEP deve conter 8 dígitos.");
+            }
+        }
+
+        function confirmarCompra() {
+            const metodoPagamento = document.querySelector('input[name="metodoPagamento"]:checked');
+            if (!metodoPagamento) {
+                alert("Por favor, selecione um método de pagamento.");
+                return;
+            }
+
+            const endereco = {
+                rua: document.getElementById('rua').value,
+                numero: document.getElementById('numero').value,
+                cidade: document.getElementById('cidade').value,
+                bairro: document.getElementById('bairro').value,
+                cep: document.getElementById('cep').value
+            };
+
+            if (!endereco.rua || !endereco.cidade || !endereco.bairro || !endereco.cep) {
+                alert("Por favor, preencha todos os dados do endereço.");
+                return;
+            }
+            
+            alert(`Compra confirmada com o método de pagamento: ${metodoPagamento.value}.`);
+            localStorage.removeItem('carrinho');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
