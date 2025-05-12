@@ -7,7 +7,9 @@
         body { font-family: Arial, sans-serif; margin: 40px; }
         header { display: flex; justify-content: space-between; align-items: center; }
         .produtos { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 40px;}
-        .produto { border: 1px solid #ccc; border-radius: 8px; padding: 20px; width: 200px; }
+        .produto { border: 1px solid #ccc; border-radius: 8px; padding: 20px; width: 200px; transition: box-shadow 0.2s;}
+        .produto:hover { box-shadow: 0 2px 12px #0001; }
+        .produto a { text-decoration: none; color: inherit; display:block; height:100%; }
         .botoes, #navegacao { display: flex; gap: 12px; align-items: center; }
         button { padding: 8px 16px; }
         .perfil-icon {
@@ -20,6 +22,21 @@
             line-height: 32px; 
             font-size: 21px;
             margin-right: 5px;
+        }
+        .carrinho-link {
+            font-size: 1em;
+            color: #265ac2;
+            background: #e7f1ff;
+            border: 1px solid #c3dafc;
+            border-radius: 18px;
+            padding: 8px 18px;
+            margin-left: 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+            text-decoration: none;
+        }
+        .carrinho-link:hover {
+            background: #d1e3fb;
         }
     </style>
 </head>
@@ -43,11 +60,13 @@
                     let div = document.createElement('div');
                     div.className = 'produto';
                     div.innerHTML = `
-                        <strong>${produto.nome}</strong><br>
-                        <small>${produto.marca}</small><br>
-                        ${produto.descricao ? `<span>${produto.descricao}</span><br>` : ''}
-                        <span>Capacidade: ${produto.capacidade}</span><br>
-                        <span><b>Preço: R$ ${produto.preco.toFixed(2)}</b></span>
+                        <a href="produto.html?id=${produto.codigo}">
+                            <strong>${produto.nome}</strong><br>
+                            <small>${produto.marca}</small><br>
+                            ${produto.descricao ? `<span>${produto.descricao}</span><br>` : ''}
+                            <span>Capacidade: ${produto.capacidade}</span><br>
+                            <span><b>Preço: R$ ${produto.preco.toFixed(2)}</b></span>
+                        </a>
                     `;
                     lista.appendChild(div);
                 });
@@ -60,6 +79,12 @@
         function atualizarNavegacao() {
             const user = localStorage.getItem("clienteLogado");
             const nav = document.getElementById("navegacao");
+            let carrinhoCount = 0;
+            try {
+                const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+                carrinhoCount = carrinho.reduce((soma, item) => soma + (item.qtd || 1), 0);
+            } catch(e) {}
+            let carrinhoBtn = `<a href="carrinho.html" class="carrinho-link">🛒 Carrinho (<span id="carrinho-count">${carrinhoCount}</span>)</a>`;
             if (user) {
                 const cliente = JSON.parse(user);
                 nav.innerHTML = `
@@ -67,10 +92,12 @@
                         <span class="perfil-icon">👤</span>
                         <span>Olá, ${cliente.nome.split(' ')[0]}</span>
                     </button>
+                    ${carrinhoBtn}
                     <button onclick="deslogar()">Sair</button>
                 `;
             } else {
                 nav.innerHTML = `
+                    ${carrinhoBtn}
                     <button onclick="window.location.href='login.html'">Login</button>
                     <button onclick="window.location.href='cadastro.html'">Cadastro</button>
                 `;
@@ -81,6 +108,16 @@
             window.location.reload();
         }
         atualizarNavegacao();
+
+        // Atualiza contador de carrinho ao adicionar (útil se usar em páginas dinâmicas)
+        window.addEventListener("storage", function(e){
+            if(e.key === "carrinho" && document.getElementById("carrinho-count")){
+                try {
+                    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+                    document.getElementById("carrinho-count").innerText = carrinho.reduce((soma, item) => soma + (item.qtd || 1), 0);
+                } catch {}
+            }
+        })
     </script>
 </body>
 </html>

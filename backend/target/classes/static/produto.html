@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Produto | Casa Clima</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .produto-detalhe { max-width: 500px; margin: auto; border: 1px solid #ccc; border-radius: 10px; padding: 28px; }
+        h2 { color: #285abc; }
+        .info-produto span { display: block; margin: 10px 0; }
+        .carrinho-bar { text-align: right; margin-bottom: 18px;}
+        button { padding: 8px 24px; background: #285abc; color: #fff; border-radius: 5px; border: none; cursor: pointer; }
+        #msg { margin-top: 20px; color: #0a8710; font-weight: bold;}
+        input[type='number'] { width: 56px; padding: 5px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="carrinho-bar">
+        <a href="carrinho.html" style="text-decoration:none;" class="carrinho-link">🛒 Carrinho</a>
+    </div>
+    <div class="produto-detalhe">
+        <h2 id="nome"></h2>
+        <div class="info-produto">
+            <span id="marca"></span>
+            <span id="descricao"></span>
+            <span id="capacidade"></span>
+            <span id="preco"></span>
+        </div>
+        <form id="addForm" autocomplete="off">
+            <label>
+                Quantidade:
+                <input type="number" id="qtd" value="1" min="1" required>
+            </label>
+            <button type="submit" id="addCarrinho">Adicionar ao Carrinho</button>
+        </form>
+        <div id="msg"></div>
+    </div>
+    <script>
+        // Pega o id da URL
+        function getParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+        const id = getParam('id');
+        if (!id) {
+            document.querySelector('.produto-detalhe').innerText = "Produto não encontrado.";
+            throw '';
+        }
+        let produtoGlobal = null;
+        // Busca dados do produto
+        fetch(`/api/produtos/${id}`)
+            .then(resp => resp.json())
+            .then(produto => {
+                if (!produto) {
+                    document.querySelector('.produto-detalhe').innerText = "Produto não encontrado.";
+                    return;
+                }
+                produtoGlobal = produto;
+                document.getElementById('nome').innerText = produto.nome;
+                document.getElementById('marca').innerText = 'Marca: ' + produto.marca;
+                document.getElementById('descricao').innerText = 'Descrição: ' + (produto.descricao || '---');
+                document.getElementById('capacidade').innerText = 'Capacidade: ' + produto.capacidade;
+                document.getElementById('preco').innerText = 'Preço: R$ ' + produto.preco.toFixed(2);
+            })
+            .catch(() => {
+                document.querySelector('.produto-detalhe').innerText = "Erro ao buscar o produto.";
+            });
+
+        document.getElementById('addForm').onsubmit = function(e) {
+            e.preventDefault();
+            if (!produtoGlobal) return;
+
+            const qtdInput = document.getElementById('qtd');
+            let qtd = parseInt(qtdInput.value, 10);
+            if(isNaN(qtd) || qtd <= 0) {
+                document.getElementById('msg').innerText = "Digite uma quantidade válida.";
+                return;
+            }
+            // Recuperar carrinho
+            let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            // Buscar se já existe
+            let encontrado = carrinho.find(item => item.codigo === produtoGlobal.codigo);
+            if (encontrado) {
+                encontrado.qtd += qtd;
+            } else {
+                carrinho.push({ ...produtoGlobal, qtd: qtd });
+            }
+            // Salvar de volta
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            document.getElementById('msg').innerText = `Adicionado ${qtd} ao carrinho!`;
+            // Zera o campo quantidade (volta para vazio)
+            qtdInput.value = '';
+            // Dispara atualização do botão carrinho automaticamente em index/carrinho
+            window.dispatchEvent(new Event("storage"));
+        };
+    </script>
+</body>
+</html>
