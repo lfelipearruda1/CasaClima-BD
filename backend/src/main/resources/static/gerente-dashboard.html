@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel do Gerente - Funcionários</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        h1 { margin-bottom: 16px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 30px;}
+        th, td { border: 1px solid #bbb; padding: 7px 8px; text-align: left;}
+        th { background: #efefef; }
+        tr:nth-child(even) { background: #fafafa; }
+        .btn { padding: 5px 14px; border: none; border-radius: 4px; cursor: pointer; margin-right: 6px;}
+        .btn-edit { background: #1976d2; color: #fff; }
+        .btn-del { background: #c62828; color: #fff; }
+        .btn-add { background: #388e3c; color: #fff; padding: 8px 20px; margin-bottom: 18px;}
+        .form-box { background: #f7f7f7; border: 1px solid #bbb; border-radius: 8px; padding: 24px; max-width: 480px; margin-bottom: 20px;}
+        label { display: block; margin-top: 8px;}
+        input { width: 100%; padding: 8px; margin-top: 3px;}
+        .hide { display: none; }
+        #msg { margin: 16px 0;}
+    </style>
+</head>
+<body>
+    <h1>Painel do Gerente – Funcionários</h1>
+
+    <button class="btn btn-add" onclick="abrirCadastro()">Cadastrar novo funcionário</button>
+
+    <div id="msg"></div>
+
+    <table id="tabela-funcionarios">
+        <thead>
+            <tr>
+                <th>Matrícula</th>
+                <th>Nome</th>
+                <th>Rua</th>
+                <th>Número</th>
+                <th>Cidade</th>
+                <th>Bairro</th>
+                <th>Data Nasc.</th>
+                <th>Telefone</th>
+                <th>Supervisor</th>
+                <th>CPF</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div class="form-box hide" id="formSection">
+        <h2 id="formTitle">Cadastro de Funcionário</h2>
+        <form id="funcionarioForm">
+            <input type="hidden" id="formModo" value="novo">
+            <label>Matrícula:<br><input type="text" id="matricula" maxlength="20" required></label>
+            <label>Nome:<br><input type="text" id="nome" maxlength="100" required></label>
+            <label>Rua:<br><input type="text" id="rua" maxlength="100" required></label>
+            <label>Número:<br><input type="number" id="numero" required></label>
+            <label>Cidade:<br><input type="text" id="cidade" maxlength="50" required></label>
+            <label>Bairro:<br><input type="text" id="bairro" maxlength="50" required></label>
+            <label>Data de Nascimento:<br><input type="date" id="data_nascimento" required></label>
+            <label>Telefone:<br><input type="text" id="telefone" maxlength="15" required></label>
+            <div id="senhaDiv">
+            <label>Senha:<br><input type="password" id="senha" maxlength="255" required></label>
+            </div>
+            <label>Supervisor (matrícula) <span style="color:gray;font-size:0.9em;">(opcional)</span>:<br>
+            <input type="text" id="supervisor" maxlength="20"></label>
+            <label>CPF:<br><input type="text" id="cpf" maxlength="11" required></label>
+            <button type="submit" id="btnCadastrar">Salvar</button>
+            <button type="button" onclick="fecharCadastro()" style="margin-left:15px;">Cancelar</button>
+        </form>
+        <div id="formMsg" style="margin-top:13px;"></div>
+    </div>
+
+    <script>
+        function buscarFuncionarios() {
+            fetch('/api/funcionarios')
+            .then(r => r.json())
+            .then(lista => {
+                let tbody = "";
+                for(let f of lista) {
+                    tbody += `<tr>
+                        <td>${f.matricula}</td>
+                        <td>${f.nome}</td>
+                        <td>${f.rua||""}</td>
+                        <td>${f.numero||""}</td>
+                        <td>${f.cidade||""}</td>
+                        <td>${f.bairro||""}</td>
+                        <td>${f.dataNascimento ? f.dataNascimento.split("T")[0] : ""}</td>
+                        <td>${f.telefone||""}</td>
+                        <td>${f.supervisor||""}</td>
+                        <td>${f.cpf}</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="abrirEdicao('${f.matricula}')">Editar</button>
+                            <button class="btn btn-del" onclick="excluirFuncionario('${f.matricula}')">Excluir</button>
+                        </td>
+                    </tr>`;
+                }
+                document.querySelector("#tabela-funcionarios tbody").innerHTML = tbody || "<tr><td colspan='11'>Nenhum funcionário cadastrado.</td></tr>";
+            });
+        }
+
+        function excluirFuncionario(matricula) {
+            if(!confirm("Deseja realmente excluir este funcionário?")) return;
+            fetch(`/api/funcionarios/${matricula}`, { method: "DELETE" })
+            .then(r => r.text())
+            .then(msg => {
+                document.getElementById("msg").innerText = msg;
+                buscarFuncionarios();
+            });
+        }
+
+        function abrirCadastro() {
+            document.getElementById("formTitle").innerText = "Cadastro de Funcionário";
+            document.getElementById("formModo").value = "novo";
+            document.getElementById("funcionarioForm").reset();
+            document.getElementById("matricula").disabled = false;
+            document.getElementById("formSection").classList.remove("hide");
+            document.getElementById("formMsg").innerText = "";
+            document.getElementById("senhaDiv").style.display = "block";
+            document.getElementById("senha").required = true;
+        }
+
+        function fecharCadastro() {
+            document.getElementById("formSection").classList.add("hide");
+        }
+
+        function abrirEdicao(matricula) {
+            fetch(`/api/funcionarios/${matricula}`)
+            .then(r => r.json())
+            .then(f => {
+                document.getElementById("formTitle").innerText = "Editar Funcionário";
+                document.getElementById("formModo").value = "editar";
+                document.getElementById("matricula").value = f.matricula;
+                document.getElementById("nome").value = f.nome;
+                document.getElementById("rua").value = f.rua || "";
+                document.getElementById("numero").value = f.numero || "";
+                document.getElementById("cidade").value = f.cidade || "";
+                document.getElementById("bairro").value = f.bairro || "";
+                document.getElementById("data_nascimento").value = f.dataNascimento ? f.dataNascimento.split("T")[0] : "";
+                document.getElementById("telefone").value = f.telefone || "";
+                document.getElementById("supervisor").value = f.supervisor || "";
+                document.getElementById("cpf").value = f.cpf;
+
+                document.getElementById("matricula").disabled = true;
+                document.getElementById("formSection").classList.remove("hide");
+                document.getElementById("formMsg").innerText = "";
+                // Oculte o campo senha e desobrigue-o
+                document.getElementById("senhaDiv").style.display = "none";
+                document.getElementById("senha").required = false;
+            });
+        }
+        document.getElementById("funcionarioForm").onsubmit = function(e){
+            e.preventDefault();
+
+            const modo = document.getElementById("formModo").value;
+
+            const matricula = document.getElementById("matricula").value.trim();
+            const nome = document.getElementById("nome").value.trim();
+            const rua = document.getElementById("rua").value.trim();
+            const numeroVal = document.getElementById("numero").value;
+            const cidade = document.getElementById("cidade").value.trim();
+            const bairro = document.getElementById("bairro").value.trim();
+            const dataNascimento = document.getElementById("data_nascimento").value;
+            const telefone = document.getElementById("telefone").value.trim();
+            const senha = document.getElementById("senha").value;
+            const supervisor = document.getElementById("supervisor").value.trim();
+            const cpf = document.getElementById("cpf").value.trim();
+
+            if (
+                !matricula || !nome || !rua || !numeroVal || !cidade ||
+                !bairro || !dataNascimento || !telefone || (!senha && modo == "novo") || !cpf
+            ) {
+                document.getElementById("formMsg").innerText = "Preencha todos os campos obrigatórios.";
+                return;
+            }
+            if (cpf.length !== 11 || isNaN(Number(cpf))) {
+                document.getElementById("formMsg").innerText = "O CPF deve ter exatamente 11 dígitos numéricos.";
+                return;
+            }
+
+            const numero = numeroVal === "" ? null : parseInt(numeroVal);
+
+            const data = {
+                matricula,
+                nome,
+                rua,
+                numero,
+                cidade,
+                bairro,
+                dataNascimento,
+                telefone,
+                senha: senha || undefined, 
+                supervisor: supervisor || null,
+                cpf
+            };
+
+            if(modo === "novo") {
+                fetch('/api/funcionarios/cadastrar', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                })
+                .then(r => {
+                    if(r.ok) {
+                        document.getElementById("formMsg").innerText = "Funcionário cadastrado com sucesso!";
+                        buscarFuncionarios();
+                        setTimeout(() => fecharCadastro(), 1000);
+                    } else {
+                        r.text().then(txt => {
+                            document.getElementById("formMsg").innerText = txt || "Erro ao cadastrar. Tente novamente.";
+                        });
+                    }
+                })
+                .catch(() => {
+                    document.getElementById("formMsg").innerText = "Erro de conexão.";
+                });
+            } else {
+
+                if (!data.senha) delete data.senha;
+                fetch(`/api/funcionarios/${matricula}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                })
+                .then(r => {
+                    if(r.ok) {
+                        document.getElementById("formMsg").innerText = "Funcionário atualizado com sucesso!";
+                        buscarFuncionarios();
+                        setTimeout(() => fecharCadastro(), 1000);
+                    } else {
+                        r.text().then(txt => {
+                            document.getElementById("formMsg").innerText = txt || "Erro na atualização.";
+                        });
+                    }
+                })
+                .catch(() => {
+                    document.getElementById("formMsg").innerText = "Erro de conexão.";
+                });
+            }
+        };
+
+        buscarFuncionarios();
+
+    </script>
+</body>
+</html>

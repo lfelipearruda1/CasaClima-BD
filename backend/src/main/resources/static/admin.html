@@ -142,6 +142,15 @@
         #produtoForm button[type="submit"] { grid-column: 1; }
         #produtoForm button[type="button"] { grid-column: 2; margin-left: 0; }
         #msg-prod { grid-column: span 2; margin-top: 10px; color: #265ac2; }
+        /* ----- Modal perfil ----- */
+        #perfilSection.form-box {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 10; background: rgba(0,0,0,0.10); align-items: center; justify-content: center; 
+        }
+        #perfilSection.aberto { display: flex !important; }
+        #perfilSection .perfil-inner {
+            background: #fff; border-radius:8px; box-shadow: 0 4px 24px #0002; max-width:340px; margin:80px auto; padding:30px 24px;
+        }
     </style>
 </head>
 <body>
@@ -177,6 +186,26 @@
             <div id="msg-prod"></div>
         </form>
     </section>
+    
+    <!-- Modal Perfil -->
+    <div id="perfilSection" class="form-box">
+      <div class="perfil-inner">
+        <h2 style="margin-top:0;">Alterar Senha</h2>
+        <form id="perfilForm">
+            <label style="font-size:0.92em;">Matrícula:<br>
+                <input type="text" id="perfil_matricula" disabled style="margin-top:2px;width:100%">
+            </label>
+            <label style="font-size:0.92em; margin-top:18px;">Nova senha:<br>
+                <input type="password" id="perfil_novaSenha" maxlength="255" required style="margin-top:2px;width:100%">
+            </label>
+            <div style="margin-top:24px; display:flex; justify-content: flex-end; gap:10px;">
+                <button type="submit">Salvar Nova Senha</button>
+                <button type="button" onclick="fecharPerfil()">Cancelar</button>
+            </div>
+        </form>
+        <div id="perfilMsg" style="margin-top:14px; color:#265ac2;font-size:1em;"></div>
+      </div>
+    </div>
 
     <script>
         let produtoEditando = null;
@@ -185,8 +214,12 @@
         if (!funcionario) { window.location.href = "login-funcionario.html"; }
         else { funcionario = JSON.parse(funcionario); }
 
+        // Perfil - matrícula do usuário logado
+        let matriculaLogado = funcionario.matricula;
+
+        // Barra de navegação
         document.getElementById("navegacao").innerHTML = `
-            <button class="edit-link" onclick="alert('Aqui você pode implementar a edição do perfil!')">
+            <button class="edit-link" onclick="abrirPerfil()">
                 <span class="perfil-icon">👤</span>
                 Olá, ${funcionario.nome.split(' ')[0]}
             </button>
@@ -388,6 +421,42 @@
                     })
                     .catch(() => alert("Erro de rede ao ativar produto."));
             }
+        };
+
+        // -------- PERFIL/SENHA ---------
+        function abrirPerfil() {
+            document.getElementById("perfilSection").classList.add("aberto");
+            document.getElementById("perfilForm").reset();
+            document.getElementById("perfil_matricula").value = matriculaLogado;
+            document.getElementById("perfilMsg").innerText = "";
+        }
+        function fecharPerfil() {
+            document.getElementById("perfilSection").classList.remove("aberto");
+        }
+        document.getElementById("perfilForm").onsubmit = function(e) {
+            e.preventDefault();
+            const novaSenha = document.getElementById("perfil_novaSenha").value;
+            if (!novaSenha || novaSenha.length < 3) {
+                document.getElementById("perfilMsg").innerText = "Informe uma nova senha válida!";
+                return;
+            }
+            fetch(`/api/funcionarios/${encodeURIComponent(matriculaLogado)}/senha`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ senha: novaSenha })
+            })
+            .then(async r => {
+                if(r.ok) {
+                    document.getElementById("perfilMsg").innerText = "Senha alterada com sucesso!";
+                    setTimeout(() => fecharPerfil(), 1200);
+                } else {
+                    let msg = await r.text();
+                    document.getElementById("perfilMsg").innerText = msg || "Erro ao alterar senha.";
+                }
+            })
+            .catch(() => {
+                document.getElementById("perfilMsg").innerText = "Erro de conexão.";
+            });
         };
     </script>
 </body>
