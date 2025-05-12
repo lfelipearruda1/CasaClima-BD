@@ -30,23 +30,27 @@
             <label>
                 Quantidade:
                 <input type="number" id="qtd" value="1" min="1" required>
-            </label>
+            </label><br>
+            <label>
+                <input type="checkbox" id="incluirInstalacao"> Incluir Instalação
+            </label><br><br>
             <button type="submit" id="addCarrinho">Adicionar ao Carrinho</button>
         </form>
         <div id="msg"></div>
     </div>
     <script>
-        // Pega o id da URL
         function getParam(name) {
             return new URLSearchParams(window.location.search).get(name);
         }
+
         const id = getParam('id');
         if (!id) {
             document.querySelector('.produto-detalhe').innerText = "Produto não encontrado.";
             throw '';
         }
+
         let produtoGlobal = null;
-        // Busca dados do produto
+
         fetch(`/api/produtos/${id}`)
             .then(resp => resp.json())
             .then(produto => {
@@ -70,28 +74,34 @@
             if (!produtoGlobal) return;
 
             const qtdInput = document.getElementById('qtd');
+            const incluirInstalacao = document.getElementById('incluirInstalacao').checked;
             let qtd = parseInt(qtdInput.value, 10);
-            if(isNaN(qtd) || qtd <= 0) {
+
+            if (isNaN(qtd) || qtd <= 0) {
                 document.getElementById('msg').innerText = "Digite uma quantidade válida.";
                 return;
             }
-            // Recuperar carrinho
+
             let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-            // Buscar se já existe
             let encontrado = carrinho.find(item => item.codigo === produtoGlobal.codigo);
+
             if (encontrado) {
                 encontrado.qtd += qtd;
             } else {
                 carrinho.push({ ...produtoGlobal, qtd: qtd });
             }
-            // Salvar de volta
+
+            if (incluirInstalacao) {
+                carrinho.push({ nome: "Instalação para " + produtoGlobal.nome, preco: 200.00, qtd: qtd });
+            }
+
             localStorage.setItem('carrinho', JSON.stringify(carrinho));
-            document.getElementById('msg').innerText = `Adicionado ${qtd} ao carrinho!`;
-            // Zera o campo quantidade (volta para vazio)
+            document.getElementById('msg').innerText = `Adicionado ${qtd} ao carrinho!${incluirInstalacao ? " Com instalação." : ""}`;
             qtdInput.value = '';
-            // Dispara atualização do botão carrinho automaticamente em index/carrinho
+            document.getElementById('incluirInstalacao').checked = false;
             window.dispatchEvent(new Event("storage"));
         };
+
     </script>
 </body>
 </html>

@@ -4,39 +4,41 @@
     <meta charset="UTF-8">
     <title>Meu Carrinho | Casa Clima</title>
     <style>
-        body { font-family: Arial, sans-serif; margin:40px;}
-        table { border-collapse: collapse; width:100%; margin-top:24px;}
-        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align:left;}
-        th { background: #bedaff;}
-        tfoot td { font-weight:bold; }
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        header { display: flex; justify-content: space-between; align-items: center; }
+        table { border-collapse: collapse; width: 100%; margin-top: 24px; }
+        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #bedaff; }
+        tfoot td { font-weight: bold; }
         button { margin-left: 8px; }
+        .nav-button { text-decoration: none; color: #265ac2; background: #e7f1ff; padding: 8px 16px; border-radius: 5px; border: 1px solid #c3dafc; display: inline-block; margin-bottom: 20px; }
+        .nav-button:hover { background: #d1e3fb; }
         .empty { text-align: center; margin-top: 40px; font-style: italic; color: #888; }
     </style>
 </head>
 <body>
-    <h1>Meu Carrinho</h1>
+    <header>
+        <h1>Meu Carrinho</h1>
+        <a href="index.html" class="nav-button">⬅ Voltar à Loja</a>
+    </header>
     <div id="carrinho"></div>
     <script>
-        // Recupera o carrinho do localStorage
         let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
         function renderCarrinho() {
             const carrinhoContainer = document.getElementById("carrinho");
 
-            // Carrinho vazio
             if (!carrinho.length) {
                 carrinhoContainer.innerHTML = '<div class="empty">Seu carrinho está vazio.</div>';
                 return;
             }
 
-            // Construção da tabela
             let total = 0;
             let html = `
                 <table>
                     <thead>
                         <tr>
-                            <th>Nome</th>
-                            <th>Marca</th>
+                            <th>Produto</th>
                             <th>Qtd</th>
                             <th>Subtotal</th>
                             <th>Remover</th>
@@ -45,15 +47,19 @@
                     <tbody>
             `;
 
-            // Geração dinâmica dos itens no carrinho
             carrinho.forEach((item, idx) => {
-                const subtotal = item.qtd * item.preco; // Subtotal = quantidade * preço unitário
+                const subtotal = item.qtd * item.preco;
                 total += subtotal;
 
                 html += `
                     <tr>
-                        <td>${item.nome}</td>
-                        <td>${item.marca}</td>
+                        <td>
+                            <strong>${item.nome}</strong><br>
+                            ${item.marca ? `<small>Marca: ${item.marca}</small><br>` : ''}
+                            ${item.descricao ? `<small>Descrição: ${item.descricao}</small><br>` : ''}
+                            ${item.capacidade ? `<small>Capacidade: ${item.capacidade}</small><br>` : ''}
+                            <small>Preço unitário: R$ ${item.preco.toFixed(2)}</small>
+                        </td>
                         <td>${item.qtd}</td>
                         <td>R$ ${subtotal.toFixed(2)}</td>
                         <td><button onclick="remover(${idx})">Remover</button></td>
@@ -65,7 +71,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3">Total</td>
+                            <td colspan="2">Total</td>
                             <td colspan="2">R$ ${total.toFixed(2)}</td>
                         </tr>
                     </tfoot>
@@ -76,21 +82,18 @@
             carrinhoContainer.innerHTML = html;
         }
 
-        // Remove um item do carrinho
         function remover(idx) {
-            carrinho.splice(idx, 1); // Remove pelo índice
-            localStorage.setItem('carrinho', JSON.stringify(carrinho)); // Salva de volta no storage
-            renderCarrinho(); // Re-renderiza o carrinho
+            carrinho.splice(idx, 1);
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            renderCarrinho();
         }
 
-        // Função para finalizar compra (simulada por enquanto)
         function finalizar() {
             alert(`Compra finalizada com ${carrinho.length} produto(s).`);
-            localStorage.removeItem('carrinho'); // Limpa o carrinho
-            renderCarrinho(); // Atualiza a tela
+            localStorage.removeItem('carrinho');
+            renderCarrinho();
         }
 
-        // Inicializa a renderização do carrinho ao carregar a página
         renderCarrinho();
     </script>
 </body>
