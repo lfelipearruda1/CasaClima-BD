@@ -2,41 +2,150 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Finalizar Compra</title>
+    <title>Finalizar Compra | Casa Clima</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 24px; }
-        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; vertical-align: top; }
-        th { background: #bedaff; }
-        tfoot td { font-weight: bold; }
-        .form-box { max-width: 600px; margin: 40px 0; }
-        label { display: block; margin-top: 12px; }
-        input { width: calc(100% - 16px); padding: 8px; margin-top: 2px; }
-        .payment-options { margin-top: 20px; }
-        button { padding: 10px 20px; background-color: #285abc; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .checkout-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+        }
+
+        .form-box {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 48%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 1em;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: #fff;
+        }
+
+        tfoot td {
+            font-weight: bold;
+            background-color: #f7faff;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        input {
+            width: calc(100% - 16px);
+            padding: 10px;
+            margin-top: 4px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .payment-methods {
+            margin-top: 20px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #888;
+            margin: 20px 0;
+        }
+
+        h3 {
+            color: #1e3a8a;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #3657b3;
+        }
     </style>
 </head>
 <body>
     <h1>Finalizar Compra</h1>
-    <div id="resumoCompra"></div>
+    <div class="checkout-container">
+        <div class="form-box">
+            <h3>Detalhes do Endereço:</h3>
+            <label>CEP:
+                <input type="text" id="cep" maxlength="8" onblur="buscarCEP()">
+            </label>
+            <label>Rua:
+                <input type="text" id="rua">
+            </label>
+            <label>Número:
+                <input type="number" id="numero">
+            </label>
+            <label>Cidade:
+                <input type="text" id="cidade">
+            </label>
+            <label>Bairro:
+                <input type="text" id="bairro">
+            </label>
 
-    <div class="form-box" id="enderecoForm">
-        <h3>Detalhes do Endereço:</h3>
-        <label>CEP:<br><input type="text" id="cep" maxlength="8" onblur="buscarCEP()"></label>
-        <label>Rua:<br><input type="text" id="rua"></label>
-        <label>Número:<br><input type="number" id="numero"></label>
-        <label>Cidade:<br><input type="text" id="cidade"></label>
-        <label>Bairro:<br><input type="text" id="bairro"></label>
-    </div>
+            <hr>
 
-    <div class="payment-options">
-        <h3>Escolha o Método de Pagamento:</h3>
-        <label><input type="radio" name="metodoPagamento" value="Cartão de Crédito" required> Cartão de Crédito</label>
-        <label><input type="radio" name="metodoPagamento" value="Boleto"> Boleto</label>
-        <label><input type="radio" name="metodoPagamento" value="PIX"> PIX</label>
+            <div class="payment-methods">
+                <h3>Escolha o Método de Pagamento:</h3>
+                <label><input type="radio" name="metodoPagamento" value="Cartão de Crédito" required> Cartão de Crédito</label>
+                <label><input type="radio" name="metodoPagamento" value="Boleto"> Boleto</label>
+                <label><input type="radio" name="metodoPagamento" value="PIX"> PIX</label>
+            </div>
+        </div>
+
+        <div class="form-box">
+            <div id="resumoCompra"></div>
+            <button onclick="confirmarCompra()">Confirmar Compra</button>
+        </div>
     </div>
-    
-    <button onclick="confirmarCompra()">Confirmar Compra</button>
 
     <script>
         let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
