@@ -23,6 +23,7 @@
 
         header {
             width: 100%;
+            height: 115px; 
             background-color: #1e3a8a;
             color: white;
             display: flex;
@@ -36,8 +37,10 @@
             z-index: 1000;
         }
 
+
         header img {
-            height: 50px;
+            height: 85px;
+            width: auto;
         }
 
         #navegacao {
@@ -134,7 +137,6 @@
 </head>
 
 <body>
-    <!-- Cabeçalho -->
     <header>
         <div>
             <img src="casa-clima-logo.png" alt="Casa Clima - Ar Condicionado">
@@ -144,17 +146,13 @@
             <button onclick="window.location.href='cadastro.html'">Cadastro</button>
         </div>
     </header>
-
-    <!-- Produtos -->
     <h2>Produtos em Destaque</h2>
     <div class="produtos" id="lista-produtos"></div>
 
-    <!-- Rodapé -->
     <footer>
         © 2025 Casa Clima - Todos os direitos reservados | <a href="sobre.html">Sobre Nós</a>
     </footer>
 
-    <!-- Script -->
     <script>
         fetch('/api/produtos/ativos')
             .then(resp => resp.json())
