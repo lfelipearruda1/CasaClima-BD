@@ -9,7 +9,6 @@ public class Pedido {
     private double valorTotal;
     private String status;
     private String metodoPagamento;
-    private String funcionarioMatricula;
     private int clienteId;
     private int transporteId;
     private List<Instalacao> instalacoes;
@@ -58,14 +57,6 @@ public class Pedido {
 
     public void setMetodoPagamento(String metodoPagamento) {
         this.metodoPagamento = metodoPagamento;
-    }
-
-    public String getFuncionarioMatricula() {
-        return funcionarioMatricula;
-    }
-
-    public void setFuncionarioMatricula(String funcionarioMatricula) {
-        this.funcionarioMatricula = funcionarioMatricula;
     }
 
     public int getClienteId() {

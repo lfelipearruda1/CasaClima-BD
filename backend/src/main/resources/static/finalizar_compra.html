@@ -285,9 +285,20 @@
         }
 
         function obterClienteId() {
-            // Implementar lógica para obter o ID do cliente logado, por exemplo, de localStorage
-            return parseInt(localStorage.getItem('clienteId'));
+            const clienteIdStr = localStorage.getItem('clienteId');
+            if (!clienteIdStr) {
+                return null;
+            }
+            
+            const clienteId = parseInt(clienteIdStr, 10);
+            
+            if (isNaN(clienteId) || clienteId <= 0) {
+                return null;
+            }
+            
+            return clienteId;
         }
+
     </script>
 </body>
 </html>

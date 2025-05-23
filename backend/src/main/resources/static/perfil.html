@@ -3,31 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <title>Meu Perfil - Casa Clima</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .perfil-box { max-width: 400px; margin: 60px auto; padding: 28px; border: 1px solid #bbb; border-radius: 8px; }
-        h2 { margin-bottom: 24px; }
-        label { display: block; margin-top: 10px;}
-        input { width: 100%; padding: 6px; margin-top: 2px;}
-        button { margin-top: 20px; padding: 12px 24px;}
+        :root {
+            --azul: #1e3a8a;
+            --azul-claro: #3657b3;
+            --cinza-bg: #f0f4f8;
+            --branco: #fff;
+            --cinza: #888;
+            --glass: rgba(255,255,255,0.75);
+            --glass-border: rgba(30,58,138,0.13);
+        }
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--azul-claro) 0%, var(--cinza-bg) 100%);
+            color: #222;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* Bolhas decorativas */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.18;
+            z-index: 0;
+        }
+        .bubble1 { width: 180px; height: 180px; background: var(--azul); top: 30px; left: -60px; }
+        .bubble2 { width: 120px; height: 120px; background: var(--azul-claro); bottom: 60px; right: -40px; }
+        .bubble3 { width: 80px; height: 80px; background: var(--azul); bottom: 10%; left: 10vw; }
+        .perfil-box {
+            max-width: 420px;
+            width: 100%;
+            margin: 60px auto 32px auto;
+            padding: 38px 30px 32px 30px;
+            background: var(--glass);
+            border-radius: 22px;
+            box-shadow: 0 8px 40px rgba(30,58,138,0.13);
+            border: 1.5px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(7px);
+            box-sizing: border-box;
+        }
+        .perfil-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--azul-claro) 60%, var(--azul) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 12px rgba(30,58,138,0.10);
+            border: 3px solid var(--branco);
+            position: relative;
+        }
+        .perfil-avatar i {
+            color: var(--branco);
+            font-size: 3.2rem;
+        }
+        .perfil-nome {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--azul);
+            margin-bottom: 2px;
+            text-align: center;
+        }
+        .perfil-sub {
+            font-size: 1.01rem;
+            color: var(--cinza);
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        h2 { display: none; }
+        form { width: 100%; }
+        .input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+        .input-group i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--azul-claro);
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px 10px 10px 38px;
+            border: 1.5px solid #cfd8dc;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f7fafc;
+            transition: border 0.2s;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            border: 1.5px solid var(--azul-claro);
+            outline: none;
+        }
+        button[type="submit"] {
+            margin-top: 10px;
+            padding: 13px 0;
+            width: 100%;
+            background: linear-gradient(90deg, var(--azul) 60%, var(--azul-claro) 100%);
+            color: var(--branco);
+            border: none;
+            border-radius: 22px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.07);
+            transition: background 0.3s, transform 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: var(--azul-claro);
+            transform: scale(1.03);
+        }
+        #msg {
+            margin-top: 18px;
+            color: green;
+            font-weight: 500;
+            text-align: center;
+            min-height: 22px;
+            transition: color 0.2s;
+        }
+        #msg.error { color: #d32f2f; }
+        .voltar-btn {
+            margin-top: 18px;
+            padding: 10px 0;
+            width: 100%;
+            background: var(--branco);
+            color: var(--azul);
+            border: 1.5px solid var(--azul-claro);
+            border-radius: 22px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+        .voltar-btn:hover {
+            background: var(--azul-claro);
+            color: var(--branco);
+        }
+        @media (max-width: 600px) {
+            .perfil-box { padding: 18px 4vw; margin-top: 30px; }
+            .perfil-nome { font-size: 1.1rem; }
+        }
     </style>
 </head>
 <body>
+    <div class="bubble bubble1"></div>
+    <div class="bubble bubble2"></div>
+    <div class="bubble bubble3"></div>
     <div class="perfil-box">
-        <h2>Meu Perfil</h2>
+        <div class="perfil-avatar">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="perfil-nome">Usuário Teste</div>
+        <div class="perfil-sub">Bem-vindo(a) de volta!</div>
         <form id="perfilForm">
-            <label>Nome:<br><input type="text" id="nome" required></label>
-            <label>Rua:<br><input type="text" id="rua" required></label>
-            <label>Número:<br><input type="number" id="numero" required></label>
-            <label>Cidade:<br><input type="text" id="cidade" required></label>
-            <label>Bairro:<br><input type="text" id="bairro" required></label>
-            <label>Telefone:<br><input type="text" id="telefone" required></label>
-            <label>CPF:<br><input type="text" id="cpf" maxlength="11" readonly></label>
-            <label>Senha:<br><input type="password" id="senha" required></label>
-            <button type="submit">Salvar alterações</button>
+            <div class="input-group">
+                <i class="fa fa-user"></i>
+                <input type="text" id="nome" required placeholder="Nome">
+            </div>
+            <div class="input-group">
+                <i class="fa fa-road"></i>
+                <input type="text" id="rua" required placeholder="Rua">
+            </div>
+            <div class="input-group">
+                <i class="fa fa-home"></i>
+                <input type="number" id="numero" required placeholder="Número">
+            </div>
+            <div class="input-group">
+                <i class="fa fa-city"></i>
+                <input type="text" id="cidade" required placeholder="Cidade">
+            </div>
+            <div class="input-group">
+                <i class="fa fa-map-marker-alt"></i>
+                <input type="text" id="bairro" required placeholder="Bairro">
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone"></i>
+                <input type="text" id="telefone" required placeholder="Telefone">
+            </div>
+            <div class="input-group">
+                <i class="fa fa-id-card"></i>
+                <input type="text" id="cpf" maxlength="11" readonly placeholder="CPF">
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock"></i>
+                <input type="password" id="senha" required placeholder="Senha">
+            </div>
+            <button type="submit"><i class="fa fa-save"></i> Salvar alterações</button>
         </form>
-        <div id="msg" style="margin-top:18px;color:green"></div>
-        <button onclick="window.location.href='index.html'">Voltar à loja</button>
+        <div id="msg"></div>
+        <button class="voltar-btn" onclick="window.location.href='index.html'"><i class="fa fa-arrow-left"></i> Voltar à loja</button>
     </div>
     <script>
         let cliente = JSON.parse(localStorage.getItem("clienteLogado"));

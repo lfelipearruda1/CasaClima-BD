@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Meu Carrinho | Casa Clima</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f4f8;
-            color: #333;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, #3657b3 0%, #f0f4f8 100%);
+            color: #222;
             margin: 0;
-            padding: 40px;
+            padding: 40px 0 0 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -23,6 +25,14 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 18px;
+            box-shadow: 0 8px 40px rgba(30,58,138,0.13);
+            border: 1.5px solid rgba(30,58,138,0.13);
+            padding: 18px 30px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(7px);
         }
 
         h1 {
@@ -33,15 +43,21 @@
         .nav-button {
             text-decoration: none;
             color: #fff;
-            background: #1e3a8a;
+            background: linear-gradient(90deg, #1e3a8a 60%, #3657b3 100%);
             padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: background 0.3s ease;
+            border-radius: 22px;
+            font-size: 1.08em;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.07);
+            transition: background 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .nav-button:hover {
             background: #3657b3;
+            transform: scale(1.03);
         }
 
         table {
@@ -49,10 +65,12 @@
             width: 100%;
             max-width: 800px;
             margin-top: 24px;
-            background-color: #fff;
-            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 40px rgba(30,58,138,0.13);
+            border: 1.5px solid rgba(30,58,138,0.13);
+            backdrop-filter: blur(7px);
         }
 
         th, td {
@@ -71,6 +89,8 @@
         tfoot td {
             font-weight: bold;
             background-color: #f7faff;
+            font-size: 1.08em;
+            letter-spacing: 0.5px;
         }
 
         button {
@@ -108,13 +128,30 @@
 
         .finalizar-btn:hover {
             background-color: #3657b3;
+            animation: pulse 0.4s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1);}
+            50% { transform: scale(1.07);}
+            100% { transform: scale(1);}
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        @media (max-width: 700px) {
+            header, table { max-width: 98vw; padding: 12px 2vw; }
+            h1 { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
     <header>
         <h1>Meu Carrinho</h1>
-        <a href="index.html" class="nav-button">⬅ Voltar à Loja</a>
+        <a href="index.html" class="nav-button"><i class="fa fa-arrow-left"></i> Voltar à Loja</a>
     </header>
     <div id="carrinho"></div>
     <script>
@@ -124,7 +161,7 @@
             const carrinhoContainer = document.getElementById("carrinho");
 
             if (!carrinho.length) {
-                carrinhoContainer.innerHTML = '<div class="empty">Seu carrinho está vazio.</div>';
+                carrinhoContainer.innerHTML = '<div class="empty"><i class="fa fa-shopping-cart" style="font-size:2.2rem;color:#3657b3;"></i><br>Seu carrinho está vazio.</div>';
                 return;
             }
 
@@ -136,7 +173,7 @@
                             <th>Produto</th>
                             <th>Qtd</th>
                             <th>Subtotal</th>
-                            <th>Remover</th>
+                            <th><i class="fa fa-trash"></i></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -150,14 +187,14 @@
                     <tr>
                         <td>
                             <strong>${item.nome}</strong><br>
-                            ${item.marca ? `<small>Marca: ${item.marca}</small><br>` : ''}
-                            ${item.descricao ? `<small>Descrição: ${item.descricao}</small><br>` : ''}
-                            ${item.capacidade ? `<small>Capacidade: ${item.capacidade}</small><br>` : ''}
-                            <small>Preço unitário: R$ ${item.preco.toFixed(2)}</small>
+                            ${item.marca ? `<small><i class='fa fa-industry'></i> ${item.marca}</small><br>` : ''}
+                            ${item.descricao ? `<small><i class='fa fa-align-left'></i> ${item.descricao}</small><br>` : ''}
+                            ${item.capacidade ? `<small><i class='fa fa-wind'></i> ${item.capacidade}</small><br>` : ''}
+                            <small><i class='fa fa-tag'></i> R$ ${item.preco.toFixed(2)}</small>
                         </td>
                         <td>${item.qtd}</td>
                         <td>R$ ${subtotal.toFixed(2)}</td>
-                        <td><button onclick="remover(${idx})">Remover</button></td>
+                        <td><button onclick="remover(${idx})"><i class="fa fa-trash"></i></button></td>
                     </tr>
                 `;
             });
@@ -171,16 +208,26 @@
                         </tr>
                     </tfoot>
                 </table>
-                <button class="finalizar-btn" onclick="finalizar()">Finalizar Compra</button>
+                <button class="finalizar-btn" onclick="finalizar()"><i class="fa fa-credit-card"></i> Finalizar Compra</button>
             `;
 
             carrinhoContainer.innerHTML = html;
         }
 
         function remover(idx) {
-            carrinho.splice(idx, 1);
-            localStorage.setItem('carrinho', JSON.stringify(carrinho));
-            renderCarrinho();
+            const row = document.querySelectorAll('tbody tr')[idx];
+            if (row) {
+                row.classList.add('fade-out');
+                setTimeout(() => {
+                    carrinho.splice(idx, 1);
+                    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+                    renderCarrinho();
+                }, 400);
+            } else {
+                carrinho.splice(idx, 1);
+                localStorage.setItem('carrinho', JSON.stringify(carrinho));
+                renderCarrinho();
+            }
         }
 
         function finalizar() {

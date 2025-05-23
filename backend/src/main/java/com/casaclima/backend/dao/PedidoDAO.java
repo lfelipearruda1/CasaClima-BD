@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
+import java.sql.Date;   
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,21 +23,51 @@ public class PedidoDAO {
     }
 
     public List<Pedido> listar() {
-        String sql = "SELECT * FROM Pedido";
-        return db.query(sql, new BeanPropertyRowMapper<>(Pedido.class));
+        String sql = "SELECT numero, data_de_realizacao, valor_total, status, metodo_pagamento, " +
+                     "fk_Cliente_cod_cliente, fk_Transporte_ID_transporte, endereco_rua, endereco_numero, " +
+                     "endereco_cidade, endereco_bairro, endereco_cep FROM Pedido";
+        return db.query(sql, (rs, rowNum) -> {
+            Pedido pedido = new Pedido();
+            pedido.setNumero(rs.getInt("numero"));
+            pedido.setDataDeRealizacao(rs.getDate("data_realizacao"));
+            pedido.setValorTotal(rs.getDouble("valor_total"));
+            pedido.setStatus(rs.getString("status"));
+            pedido.setMetodoPagamento(rs.getString("metodo_pagamento"));
+            pedido.setClienteId(rs.getInt("fk_Cliente_cod_cliente"));
+            pedido.setTransporteId(rs.getInt("fk_Transporte_ID_transporte"));
+            pedido.setEnderecoRua(rs.getString("endereco_rua"));
+            pedido.setEnderecoNumero(rs.getInt("endereco_numero"));
+            pedido.setEnderecoCidade(rs.getString("endereco_cidade"));
+            pedido.setEnderecoBairro(rs.getString("endereco_bairro"));
+            pedido.setEnderecoCep(rs.getString("endereco_cep"));
+            return pedido;
+        });
     }
 
     public void inserir(Pedido pedido) throws SQLException {
+        System.out.println("ClienteId do pedido: " + pedido.getClienteId());
+        String sqlCheckCliente = "SELECT COUNT(*) FROM cliente WHERE cod_cliente = ?";
+        Integer count = db.queryForObject(sqlCheckCliente, Integer.class, pedido.getClienteId());
+        if (count == null || count == 0) {
+            throw new SQLException("Cliente com ID " + pedido.getClienteId() + " não encontrado.");
+        }
+
         try (Connection connection = db.getDataSource().getConnection()) {
             connection.setAutoCommit(false);
 
             int transporteId = inserirTransporte(connection);
-
             pedido.setTransporteId(transporteId);
 
-            String sqlPedido = "INSERT INTO Pedido (data_de_realizacao, valor_total, status, metodo_pagamento, fk_Cliente_cod_cliente, fk_Transporte_ID_transporte, endereco_rua, endereco_numero, endereco_cidade, endereco_bairro, endereco_cep) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sqlPedido = "INSERT INTO Pedido (data_realizacao, valor_total, status, metodo_pagamento, fk_Cliente_cod_cliente, fk_Transporte_ID_transporte, endereco_rua, endereco_numero, endereco_cidade, endereco_bairro, endereco_cep) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
             try (PreparedStatement stmtPedido = connection.prepareStatement(sqlPedido, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                stmtPedido.setDate(1, pedido.getDataDeRealizacao());
+                // Convertendo java.util.Date para java.sql.Date
+                if (pedido.getDataDeRealizacao() != null) {
+                    stmtPedido.setDate(1, new Date(pedido.getDataDeRealizacao().getTime()));
+                } else {
+                    stmtPedido.setDate(1, null);
+                }
+
                 stmtPedido.setDouble(2, pedido.getValorTotal());
                 stmtPedido.setString(3, pedido.getStatus());
                 stmtPedido.setString(4, pedido.getMetodoPagamento());
@@ -56,8 +87,13 @@ public class PedidoDAO {
                     }
                 }
 
-                inserirInstalacoes(pedido, connection);
-                inserirProdutos(pedido, connection);
+                // Evitar NullPointerException
+                if (pedido.getInstalacoes() != null) {
+                    inserirInstalacoes(pedido, connection);
+                }
+                if (pedido.getProdutos() != null) {
+                    inserirProdutos(pedido, connection);
+                }
 
                 connection.commit();
             } catch (SQLException e) {

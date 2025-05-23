@@ -5,9 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Casa Clima - Loja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
 
-    <!-- Estilização -->
     <style>
+        :root {
+            --azul: #1e3a8a;
+            --azul-claro: #3657b3;
+            --cinza-bg: #f0f4f8;
+            --branco: #fff;
+            --cinza: #888;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -16,21 +24,20 @@
 
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f0f4f8;
+            background: var(--cinza-bg);
             color: #333;
-            padding: 120px 20px 20px; 
+            min-height: 100vh;
         }
 
         header {
             width: 100%;
-            height: 115px; 
-            background-color: #1e3a8a;
-            color: white;
+            background: var(--azul);
+            color: var(--branco);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 24px 48px 18px 48px;
+            box-shadow: 0 4px 16px rgba(30,58,138,0.10);
             position: fixed;
             top: 0;
             left: 0;
@@ -38,99 +45,398 @@
         }
 
         header img {
-            height: 85px;
+            height: 90px;
             width: auto;
         }
 
         #navegacao {
             display: flex;
-            gap: 10px;
+            gap: 18px;
             align-items: center;
         }
 
         #navegacao button,
         .carrinho-link {
-            background-color: white;
-            color: #1e3a8a;
+            background: var(--branco);
+            color: var(--azul);
             border: none;
-            border-radius: 20px;
-            padding: 8px 16px;
-            font-size: 14px;
+            border-radius: 22px;
+            padding: 10px 22px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            transition: background 0.3s, transform 0.3s;
             text-decoration: none;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.07);
         }
 
         #navegacao button:hover,
         .carrinho-link:hover {
-            background-color: #e0e7ff;
-            transform: scale(1.05);
+            background: var(--azul-claro);
+            color: var(--branco);
+            transform: scale(1.07);
+        }
+
+        .hero {
+            margin-top: 180px;
+            background: linear-gradient(90deg, var(--azul) 60%, var(--azul-claro) 100%);
+            color: var(--branco);
+            border-radius: 18px;
+            padding: 48px 32px 48px 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(30,58,138,0.13);
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+            gap: 32px;
+        }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.7rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 28px;
+        }
+
+        .hero-content .cta {
+            background: var(--branco);
+            color: var(--azul);
+            border: none;
+            border-radius: 22px;
+            padding: 12px 32px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.10);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .hero-content .cta:hover {
+            background: var(--azul-claro);
+            color: var(--branco);
+        }
+
+        .hero-img {
+            min-width: 220px;
+            max-width: 320px;
+            width: 30vw;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(30,58,138,0.18);
+            background: var(--branco);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-img img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+        }
+
+        h2 {
+            margin: 60px 0 24px 0;
+            text-align: center;
+            font-size: 2rem;
+            color: var(--azul);
+            font-weight: 700;
         }
 
         .produtos {
             display: flex;
             flex-wrap: wrap;
-            gap: 24px;
-            margin-top: 20px;
+            gap: 32px;
             justify-content: center;
+            margin-bottom: 40px;
         }
 
         .produto {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            width: 220px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--branco);
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(30,58,138,0.10);
+            padding: 24px 18px 18px 18px;
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.25s, box-shadow 0.25s;
+            position: relative;
         }
 
         .produto:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-10px) scale(1.04);
+            box-shadow: 0 12px 32px rgba(30,58,138,0.18);
         }
 
-        .produto a {
-            text-decoration: none;
-            color: #333;
+        .produto .produto-img {
+            width: 100%;
+            height: 120px;
+            background: #e0e7ff;
+            border-radius: 10px;
+            margin-bottom: 14px;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--azul-claro);
         }
 
         .produto strong {
-            font-size: 16px;
-            color: #1e3a8a;
-        }
-
-        .produto span {
-            font-size: 14px;
+            font-size: 1.2rem;
+            color: var(--azul);
+            margin-bottom: 4px;
         }
 
         .produto small {
-            font-size: 12px;
-            color: #666;
+            font-size: 0.95rem;
+            color: var(--cinza);
+            margin-bottom: 6px;
+        }
+
+        .produto span {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .produto .preco {
+            font-size: 1.15rem;
+            color: var(--azul-claro);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .produto .btn-detalhes {
+            background: var(--azul);
+            color: var(--branco);
+            border: none;
+            border-radius: 18px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.3s;
+        }
+
+        .produto .btn-detalhes:hover {
+            background: var(--azul-claro);
         }
 
         footer {
+            background: var(--branco);
             margin-top: 40px;
             text-align: center;
-            color: #888;
-            font-size: 14px;
-            padding: 10px;
+            color: var(--cinza);
+            font-size: 15px;
+            padding: 18px 0 10px 0;
+            box-shadow: 0 -2px 10px rgba(30,58,138,0.07);
         }
 
-        footer a {
-            color: #1e3a8a;
+        .footer-links {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            color: var(--azul);
+            margin: 0 10px;
             text-decoration: none;
-            transition: color 0.3s ease;
+            font-weight: 500;
+            transition: color 0.2s;
         }
 
-        footer a:hover {
-            color: #3657b3;
+        .footer-links a:hover {
+            color: var(--azul-claro);
+        }
+
+        .footer-social {
+            margin-top: 8px;
+        }
+
+        .footer-social a {
+            color: var(--azul-claro);
+            margin: 0 8px;
+            font-size: 1.3rem;
+            transition: color 0.2s;
+        }
+
+        .footer-social a:hover {
+            color: var(--azul);
+        }
+
+        @media (max-width: 900px) {
+            .hero { flex-direction: column; padding: 32px 12px; text-align: center; }
+            .hero-img { margin-top: 24px; }
+        }
+
+        @media (max-width: 600px) {
+            header { flex-direction: column; padding: 18px 8px; }
+            .hero { padding: 18px 4px; }
+            .produtos { gap: 16px; }
+            .produto { width: 95vw; max-width: 340px; }
+        }
+
+        .diferenciais {
+            background: var(--branco);
+            margin: 40px auto 0 auto;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(30,58,138,0.07);
+            max-width: 1100px;
+            padding: 32px 18px 28px 18px;
+        }
+        .diferenciais-lista {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+        .diferencial {
+            flex: 1 1 180px;
+            min-width: 180px;
+            max-width: 240px;
+            background: #f0f4f8;
+            border-radius: 12px;
+            padding: 22px 14px 16px 14px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.04);
+        }
+        .diferencial i {
+            font-size: 2.2rem;
+            color: var(--azul-claro);
+            margin-bottom: 10px;
+        }
+        .diferencial h3 {
+            font-size: 1.1rem;
+            color: var(--azul);
+            margin-bottom: 6px;
+        }
+        .diferencial p {
+            font-size: 0.98rem;
+            color: #444;
+        }
+        .como-funciona {
+            background: var(--azul);
+            color: var(--branco);
+            margin: 40px auto 0 auto;
+            border-radius: 16px;
+            max-width: 1100px;
+            padding: 32px 18px 28px 18px;
+            box-shadow: 0 2px 12px rgba(30,58,138,0.09);
+        }
+        .como-funciona h2 { color: var(--branco); }
+        .passos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+        .passo {
+            flex: 1 1 180px;
+            min-width: 180px;
+            max-width: 220px;
+            background: var(--branco);
+            color: var(--azul);
+            border-radius: 12px;
+            padding: 22px 14px 16px 14px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.04);
+            position: relative;
+        }
+        .passo-num {
+            display: inline-block;
+            background: var(--azul-claro);
+            color: var(--branco);
+            font-weight: bold;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .passo h4 {
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+        }
+        .passo p {
+            font-size: 0.97rem;
+        }
+
+        .parceiros {
+            background: var(--branco);
+            margin: 40px auto 0 auto;
+            border-radius: 16px;
+            max-width: 1100px;
+            padding: 32px 18px 28px 18px;
+            box-shadow: 0 2px 12px rgba(30,58,138,0.07);
+            text-align: center;
+        }
+        .marcas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 18px;
+        }
+        .marcas img {
+            height: 48px;
+            width: auto;
+            filter: grayscale(0.2) contrast(1.1);
+            opacity: 0.85;
+            transition: filter 0.2s, opacity 0.2s;
+        }
+        .marcas img:hover {
+            filter: grayscale(0) contrast(1.2);
+            opacity: 1;
+        }
+        .sobre {
+            background: var(--branco);
+            color: var(--azul claro);
+            margin: 40px auto 0 auto;
+            border-radius: 16px;
+            max-width: 1100px;
+            padding: 32px 18px 28px 18px;
+            box-shadow: 0 2px 12px rgba(30,58,138,0.09);
+        }
+        .sobre-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            align-items: center;
+            margin-top: 18px;
+        }
+        .sobre-texto {
+            flex: 2 1 300px;
+            font-size: 1.08rem;
+        }
+        .sobre-img {
+            flex: 1 1 180px;
+            min-width: 180px;
+            max-width: 220px;
+        }
+        .sobre-img img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.13);
+        }
+        @media (max-width: 900px) {
+            .diferenciais-lista, .passos, .marcas, .sobre-content { flex-direction: column; gap: 18px; }
+            .sobre-content { text-align: center; }
         }
     </style>
 </head>
@@ -141,15 +447,99 @@
             <img src="casa-clima-logo.png" alt="Casa Clima - Ar Condicionado">
         </div>
         <div id="navegacao">
-            <button onclick="window.location.href='login.html'">Login</button>
-            <button onclick="window.location.href='cadastro.html'">Cadastro</button>
+            <button onclick="window.location.href='login.html'"><i class="fa fa-sign-in-alt"></i>&nbsp;Login</button>
+            <button onclick="window.location.href='cadastro.html'"><i class="fa fa-user-plus"></i>&nbsp;Cadastro</button>
         </div>
     </header>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>O melhor clima para sua casa</h1>
+            <p>Encontre os melhores aparelhos de ar-condicionado, com entrega rápida, instalação profissional e ofertas exclusivas. Sinta o conforto que só a Casa Clima oferece!</p>
+            <button class="cta" onclick="window.location.href='cadastro.html'">Quero meu conforto agora</button>
+        </div>
+        <div class="hero-img">
+            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Ar-condicionado em ambiente moderno">
+        </div>
+    </section>
     <h2>Produtos em Destaque</h2>
     <div class="produtos" id="lista-produtos"></div>
 
+    <section class="diferenciais">
+        <h2>Nossos Diferenciais</h2>
+        <div class="diferenciais-lista">
+            <div class="diferencial">
+                <i class="fa-solid fa-truck-fast"></i>
+                <h3>Entrega Rápida</h3>
+                <p>Receba seu ar-condicionado em tempo recorde, com logística eficiente e rastreamento.</p>
+            </div>
+            <div class="diferencial">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <h3>Instalação Profissional</h3>
+                <p>Equipe técnica qualificada para instalar seu equipamento com segurança e garantia.</p>
+            </div>
+            <div class="diferencial">
+                <i class="fa-solid fa-shield-heart"></i>
+                <h3>Garantia Estendida</h3>
+                <p>Produtos com garantia e suporte estendido para sua tranquilidade.</p>
+            </div>
+            <div class="diferencial">
+                <i class="fa-solid fa-headset"></i>
+                <h3>Atendimento Especializado</h3>
+                <p>Suporte rápido e humanizado para tirar dúvidas e ajudar em todas as etapas.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="como-funciona">
+        <h2>Como Funciona</h2>
+        <div class="passos">
+            <div class="passo">
+                <span class="passo-num">1</span>
+                <h4>Escolha seu produto</h4>
+                <p>Navegue pela loja e selecione o ar-condicionado ideal para você.</p>
+            </div>
+            <div class="passo">
+                <span class="passo-num">2</span>
+                <h4>Finalize a compra</h4>
+                <p>Faça seu cadastro, escolha a forma de pagamento e confirme o pedido.</p>
+            </div>
+            <div class="passo">
+                <span class="passo-num">3</span>
+                <h4>Receba e agende a instalação</h4>
+                <p>Receba em casa e agende a instalação com nossa equipe técnica.</p>
+            </div>
+            <div class="passo">
+                <span class="passo-num">4</span>
+                <h4>Aproveite o conforto</h4>
+                <p>Desfrute do melhor clima com garantia e suporte Casa Clima.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="sobre">
+        <h2>Sobre a Casa Clima</h2>
+        <div class="sobre-content">
+            <div class="sobre-texto">
+                <p><strong>Casa Clima</strong> nasceu com a missão de levar conforto térmico e qualidade de vida para lares e empresas de todo o Brasil. Trabalhamos com as melhores marcas do mercado, oferecendo atendimento personalizado, entrega rápida e instalação profissional. Nosso compromisso é garantir a satisfação total dos nossos clientes, do primeiro contato ao pós-venda.</p>
+                <p>Conte com a Casa Clima para transformar o ambiente da sua casa ou negócio!</p>
+            </div>
+            <div class="sobre-img">
+                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Equipe Casa Clima">
+            </div>
+        </div>
+    </section>
+
     <footer>
-        © 2025 Casa Clima - Todos os direitos reservados | <a href="sobre.html">Sobre Nós</a>
+        <div class="footer-links">
+            <a href="sobre.html">Sobre Nós</a>|
+            <a href="politica.html">Política de Privacidade</a>
+        </div>
+        <div class="footer-social">
+            <a href="https://www.instagram.com/casaclimarecife/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/CasaClimaRecife/?locale=pt_BR" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://api.whatsapp.com/send?phone=558134265000&text=Olá%2C+gostaria+de+mais+informações+sobre+ar-+condicionado.+"><i class="fab fa-whatsapp"></i></a>
+        </div>
+        <div style="margin-top:8px;">© 2025 Casa Clima - Todos os direitos reservados</div>
     </footer>
 
     <script>
@@ -162,13 +552,13 @@
                     let div = document.createElement('div');
                     div.className = 'produto';
                     div.innerHTML = `
-                        <a href="produto.html?id=${produto.codigo}">
-                            <strong>${produto.nome}</strong>
-                            <small>${produto.marca}</small>
-                            ${produto.descricao ? `<span>${produto.descricao}</span>` : ''}
-                            <span>Capacidade: ${produto.capacidade}</span>
-                            <span><b>Preço: R$ ${produto.preco.toFixed(2)}</b></span>
-                        </a>
+                        <div class="produto-img"><i class="fa-solid fa-snowflake"></i></div>
+                        <strong>${produto.nome}</strong>
+                        <small>${produto.marca}</small>
+                        ${produto.descricao ? `<span>${produto.descricao}</span>` : ''}
+                        <span>Capacidade: ${produto.capacidade}</span>
+                        <div class="preco">R$ ${produto.preco.toFixed(2)}</div>
+                        <button class="btn-detalhes" onclick="window.location.href='produto.html?id=${produto.codigo}'"><i class="fa fa-search"></i> Ver detalhes</button>
                     `;
                     lista.appendChild(div);
                 });
@@ -190,19 +580,19 @@
                     const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
                     carrinhoCount = carrinho.reduce((soma, item) => soma + (item.qtd || 1), 0);
                 } catch (e) { }
-                let carrinhoBtn = `<a href="carrinho.html" class="carrinho-link">🛒 Carrinho (<span id="carrinho-count">${carrinhoCount}</span>)</a>`;
+                let carrinhoBtn = `<a href="carrinho.html" class="carrinho-link"><i class='fa fa-shopping-cart'></i> Carrinho (<span id='carrinho-count'>${carrinhoCount}</span>)</a>`;
                 conteudoNav = `
                     <button onclick="window.location.href='perfil.html'" class="perfil-btn">
                         <span class="perfil-icon">👤</span>
                         <span>Olá, ${cliente.nome.split(' ')[0]}</span>
                     </button>
                     ${carrinhoBtn}
-                    <button onclick="deslogar()">Sair</button>
+                    <button onclick="deslogar()"><i class="fa fa-sign-out-alt"></i> Sair</button>
                 `;
             } else {
                 conteudoNav = `
-                    <button onclick="window.location.href='login.html'">Login</button>
-                    <button onclick="window.location.href='cadastro.html'">Cadastro</button>
+                    <button onclick="window.location.href='login.html'"><i class="fa fa-sign-in-alt"></i>&nbsp;Login</button>
+                    <button onclick="window.location.href='cadastro.html'"><i class="fa fa-user-plus"></i>&nbsp;Cadastro</button>
                 `;
             }
 
