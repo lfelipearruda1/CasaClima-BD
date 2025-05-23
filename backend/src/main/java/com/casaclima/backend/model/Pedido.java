@@ -1,6 +1,7 @@
 package com.casaclima.backend.model;
 
 import java.sql.Date;
+import java.util.List;
 
 public class Pedido {
     private int numero;
@@ -11,9 +12,14 @@ public class Pedido {
     private String funcionarioMatricula;
     private int clienteId;
     private int transporteId;
-    private int instalacaoId;
+    private List<Instalacao> instalacoes;
+    private String enderecoRua;
+    private int enderecoNumero;
+    private String enderecoCidade;
+    private String enderecoBairro;
+    private String enderecoCep;
+    private List<Produto> produtos;
 
-    // Getters e Setters
     public int getNumero() {
         return numero;
     }
@@ -78,11 +84,59 @@ public class Pedido {
         this.transporteId = transporteId;
     }
 
-    public int getInstalacaoId() {
-        return instalacaoId;
+    public List<Instalacao> getInstalacoes() {
+        return instalacoes;
     }
 
-    public void setInstalacaoId(int instalacaoId) {
-        this.instalacaoId = instalacaoId;
+    public void setInstalacoes(List<Instalacao> instalacoes) {
+        this.instalacoes = instalacoes;
+    }
+
+    public String getEnderecoRua() {
+        return enderecoRua;
+    }
+
+    public void setEnderecoRua(String enderecoRua) {
+        this.enderecoRua = enderecoRua;
+    }
+
+    public int getEnderecoNumero() {
+        return enderecoNumero;
+    }
+
+    public void setEnderecoNumero(int enderecoNumero) {
+        this.enderecoNumero = enderecoNumero;
+    }
+
+    public String getEnderecoCidade() {
+        return enderecoCidade;
+    }
+
+    public void setEnderecoCidade(String enderecoCidade) {
+        this.enderecoCidade = enderecoCidade;
+    }
+
+    public String getEnderecoBairro() {
+        return enderecoBairro;
+    }
+
+    public void setEnderecoBairro(String enderecoBairro) {
+        this.enderecoBairro = enderecoBairro;
+    }
+
+    public String getEnderecoCep() {
+        return enderecoCep;
+    }
+
+    public void setEnderecoCep(String enderecoCep) {
+        this.enderecoCep = enderecoCep;
+    }
+
+    public List<Produto> getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(List<Produto> produtos) {
+        this.produtos = produtos;
     }
 }

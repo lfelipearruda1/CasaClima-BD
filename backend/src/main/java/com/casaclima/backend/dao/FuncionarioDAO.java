@@ -41,7 +41,6 @@ public class FuncionarioDAO {
         String sql =
             "UPDATE funcionario SET " +
                 "nome=?, rua=?, numero=?, cidade=?, bairro=?, data_nascimento=?, telefone=?, " +
-                // só atualiza senha se enviada:
                 (func.getSenha() != null && !func.getSenha().isEmpty() ? "senha=?, " : "") +
                 "supervisor=?, cpf=? WHERE matricula=?";
         if (func.getSenha() != null && !func.getSenha().isEmpty()) {
@@ -49,7 +48,7 @@ public class FuncionarioDAO {
                 func.getDataNascimento(), func.getTelefone(), func.getSenha(),
                 func.getSupervisor(), func.getCpf(), matricula);
         } else {
-            sql = sql.replace("senha=?, ", ""); // remove do SQL se não vai setar
+            sql = sql.replace("senha=?, ", ""); 
             db.update(sql, func.getNome(), func.getRua(), func.getNumero(), func.getCidade(), func.getBairro(),
                 func.getDataNascimento(), func.getTelefone(),
                 func.getSupervisor(), func.getCpf(), matricula);

@@ -5,7 +5,6 @@ public class Promocao {
     private String tipoDesconto;
     private double valor;
 
-    // Getters e Setters
     public int getIdDesconto() {
         return idDesconto;
     }

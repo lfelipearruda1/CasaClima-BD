@@ -8,6 +8,7 @@ public class Produto {
     private double preco;
     private String marca;
     private Boolean ativo;
+    private int quantidade;
 
 
     public int getCodigo() { return codigo; }
@@ -30,4 +31,7 @@ public class Produto {
 
     public Boolean getAtivo() { return ativo; }
     public void setAtivo(Boolean ativo) { this.ativo = ativo; }
+
+    public int getQuantidade() { return quantidade; } 
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; } 
 }

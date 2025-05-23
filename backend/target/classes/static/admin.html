@@ -142,7 +142,6 @@
         #produtoForm button[type="submit"] { grid-column: 1; }
         #produtoForm button[type="button"] { grid-column: 2; margin-left: 0; }
         #msg-prod { grid-column: span 2; margin-top: 10px; color: #265ac2; }
-        /* ----- Modal perfil ----- */
         #perfilSection.form-box {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             z-index: 10; background: rgba(0,0,0,0.10); align-items: center; justify-content: center; 
@@ -214,10 +213,8 @@
         if (!funcionario) { window.location.href = "login-funcionario.html"; }
         else { funcionario = JSON.parse(funcionario); }
 
-        // Perfil - matrícula do usuário logado
         let matriculaLogado = funcionario.matricula;
 
-        // Barra de navegação
         document.getElementById("navegacao").innerHTML = `
             <button class="edit-link" onclick="abrirPerfil()">
                 <span class="perfil-icon">👤</span>
@@ -423,7 +420,6 @@
             }
         };
 
-        // -------- PERFIL/SENHA ---------
         function abrirPerfil() {
             document.getElementById("perfilSection").classList.add("aberto");
             document.getElementById("perfilForm").reset();

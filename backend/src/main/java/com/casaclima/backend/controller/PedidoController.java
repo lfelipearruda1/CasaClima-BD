@@ -2,8 +2,11 @@ package com.casaclima.backend.controller;
 
 import com.casaclima.backend.dao.PedidoDAO;
 import com.casaclima.backend.model.Pedido;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -22,7 +25,13 @@ public class PedidoController {
     }
 
     @PostMapping
-    public void cadastrar(@RequestBody Pedido pedido) {
-        dao.inserir(pedido);
+    public ResponseEntity<String> cadastrar(@RequestBody Pedido pedido) {
+        try {
+            dao.inserir(pedido);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Pedido cadastrado com sucesso.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao cadastrar o pedido.");
+        }
     }
 }

@@ -240,10 +240,53 @@
                 alert("Por favor, preencha todos os dados do endereço.");
                 return;
             }
-            
-            alert(`Compra confirmada com o método de pagamento: ${metodoPagamento.value}.`);
-            localStorage.removeItem('carrinho');
-            window.location.href = 'index.html';
+
+            const pedido = {
+                dataDeRealizacao: new Date().toISOString().split('T')[0], 
+                valorTotal: calcularTotal(),
+                status: "Pendente",
+                metodoPagamento: metodoPagamento.value,
+                clienteId: obterClienteId(), 
+                enderecoRua: endereco.rua,
+                enderecoNumero: endereco.numero,
+                enderecoCidade: endereco.cidade,
+                enderecoBairro: endereco.bairro,
+                enderecoCep: endereco.cep,
+                produtos: carrinho.map(item => ({
+                    codigo: item.codigo,
+                    quantidade: item.qtd
+                })),
+                instalacoes: [] // Adicione instalações conforme necessário
+            };
+
+            fetch("/pedidos", { // Ajuste a URL conforme necessário
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(pedido)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Compra finalizada com sucesso!");
+                    localStorage.removeItem('carrinho');
+                    window.location.href = 'index.html';
+                } else {
+                    return response.json().then(data => {
+                        throw new Error(data.message || "Erro ao finalizar a compra.");
+                    });
+                }
+            })
+            .catch(error => alert(error.message));
+        }
+
+        function calcularTotal() {
+            return carrinho.reduce((total, item) => total + (item.qtd * item.preco), 0);
+        }
+
+        function obterClienteId() {
+            // Implementar lógica para obter o ID do cliente logado, por exemplo, de localStorage
+            return parseInt(localStorage.getItem('clienteId'));
         }
     </script>
 </body>
