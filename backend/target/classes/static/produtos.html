@@ -235,11 +235,14 @@
 
 <body>
     <header>
-        <div>
+        <div style="display: flex; align-items: center;">
             <img src="casa-clima-logo.png" alt="Casa Clima - Ar Condicionado">
+            <input type="text" id="barra-pesquisa" placeholder="Pesquisar produtos..." style="margin-left: 20px; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            <button onclick="pesquisarProdutos()" style="padding: 8px 12px; border: none; background-color: var(--azul); color: var(--branco); border-radius: 4px; margin-left: 8px;">Buscar</button>
         </div>
         <div id="navegacao">
-
+            <button onclick="window.location.href='login.html'"><i class="fa fa-sign-in-alt"></i>&nbsp;Login</button>
+            <button onclick="window.location.href='cadastro.html'"><i class="fa fa-user-plus"></i>&nbsp;Cadastro</button>
         </div>
     </header>
 
@@ -304,6 +307,115 @@
                     const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
                     document.getElementById("carrinho-count").innerText = carrinho.reduce((soma, item) => soma + (item.qtd || 1), 0);
                 } catch { }
+            }
+        });
+        function pesquisarProdutos() {
+            const query = document.getElementById('barra-pesquisa').value.toLowerCase();
+            window.location.href = `produtos.html?search=${encodeURIComponent(query)}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const query = params.get('search');
+
+            if (query) {
+                fetch('/api/produtos/ativos')
+                    .then(resp => resp.json())
+                    .then(produtos => {
+                        const resultados = produtos.filter(produto => 
+                            produto.nome.toLowerCase().includes(query) || 
+                            produto.marca.toLowerCase().includes(query) ||
+                            (produto.descricao && produto.descricao.toLowerCase().includes(query))
+                        );
+
+                        let lista = document.getElementById('lista-todos-produtos');
+                        lista.innerHTML = "";
+                        if (resultados.length > 0) {
+                            resultados.forEach(produto => {
+                                let div = document.createElement('div');
+                                div.className = 'produto';
+                                const precoComDesconto = produto.precoOriginal * (1 - produto.desconto / 100);
+                                div.innerHTML = `
+                                    <div class="produto-img">
+                                        <img src="${produto.caminhoImagem}" alt="${produto.nome}" />
+                                    </div>
+                                    <strong>${produto.nome}</strong>
+                                    <small>${produto.marca}</small>
+                                    ${produto.descricao ? `<span>${produto.descricao}</span>` : ''}
+                                    <span>Capacidade: ${produto.capacidade}</span>
+                                `;
+
+                                if (produto.desconto > 0) {
+                                    div.innerHTML += `
+                                        <div class="preco" style="text-align: center;">
+                                            <span style="text-decoration: line-through; color: var(--cinza);">Preço Original: R$ ${produto.precoOriginal.toFixed(2)}</span><br>
+                                            <span>Preço com Desconto: <strong style="color: var(--azul-claro);">R$${precoComDesconto.toFixed(2)}</strong></span><br>
+                                            <span>Desconto: ${produto.desconto}%</span>
+                                        </div>
+                                    `;
+                                } else {
+                                    div.innerHTML += `<div class="preco">Preço: R$${produto.preco.toFixed(2)}</div>`;
+                                }
+
+                                div.innerHTML += `
+                                    <button class="btn-detalhes" onclick="window.location.href='produto.html?id=${produto.codigo}'">
+                                        <i class="fa fa-search"></i> Ver detalhes
+                                    </button>
+                                `;
+                                lista.appendChild(div);
+                            });
+                        } else {
+                            lista.innerHTML = "<p>Nenhum produto encontrado.</p>";
+                        }
+                    })
+                    .catch(err => {
+                        document.getElementById('lista-todos-produtos').innerText = "Erro ao carregar produtos!";
+                        console.error(err);
+                    });
+            } else {
+                fetch('/api/produtos/ativos')
+                    .then(resp => resp.json())
+                    .then(produtos => {
+                        let lista = document.getElementById('lista-todos-produtos');
+                        lista.innerHTML = "";
+                        produtos.forEach(produto => {
+                            let div = document.createElement('div');
+                            div.className = 'produto';
+                            const precoComDesconto = produto.precoOriginal * (1 - produto.desconto / 100);
+                            div.innerHTML = `
+                                <div class="produto-img">
+                                    <img src="${produto.caminhoImagem}" alt="${produto.nome}" />
+                                </div>
+                                <strong>${produto.nome}</strong>
+                                <small>${produto.marca}</small>
+                                ${produto.descricao ? `<span>${produto.descricao}</span>` : ''}
+                                <span>Capacidade: ${produto.capacidade}</span>
+                            `;
+
+                            if (produto.desconto > 0) {
+                                div.innerHTML += `
+                                    <div class="preco">
+                                        <span style="text-decoration: line-through; color: var(--cinza);">Preço Original: R$ ${produto.precoOriginal.toFixed(2)}</span><br>
+                                        <span>Preço com Desconto: <strong style="color: var(--azul-claro);">R$${precoComDesconto.toFixed(2)}</strong></span><br>
+                                        <span>Desconto: ${produto.desconto}%</span>
+                                    </div>
+                                `;
+                            } else {
+                                div.innerHTML += `<div class="preco">Preço: R$${produto.preco.toFixed(2)}</div>`;
+                            }
+
+                            div.innerHTML += `
+                                <button class="btn-detalhes" onclick="window.location.href='produto.html?id=${produto.codigo}'">
+                                    <i class="fa fa-search"></i> Ver detalhes
+                                </button>
+                            `;
+                            lista.appendChild(div);
+                        });
+                    })
+                    .catch(err => {
+                        document.getElementById('lista-todos-produtos').innerText = "Erro ao carregar produtos!";
+                        console.error(err);
+                    });
             }
         });
 

@@ -536,19 +536,6 @@
         </div>
     </section>
 
-    <section class="sobre">
-        <h2>Sobre a Casa Clima</h2>
-        <div class="sobre-content">
-            <div class="sobre-texto">
-                <p><strong>Casa Clima</strong> nasceu com a missão de levar conforto térmico e qualidade de vida para lares e empresas de todo o Brasil. Trabalhamos com as melhores marcas do mercado, oferecendo atendimento personalizado, entrega rápida e instalação profissional. Nosso compromisso é garantir a satisfação total dos nossos clientes, do primeiro contato ao pós-venda.</p>
-                <p>Conte com a Casa Clima para transformar o ambiente da sua casa ou negócio!</p>
-            </div>
-            <div class="sobre-img">
-                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Equipe Casa Clima">
-            </div>
-        </div>
-    </section>
-
     <footer>
         <div class="footer-links">
             <a href="sobre.html">Sobre Nós</a>|
@@ -606,63 +593,10 @@
                 document.getElementById('lista-produtos').innerText = "Erro ao carregar produtos!";
                 console.error(err);
             });
-            
+
         function pesquisarProdutos() {
             const query = document.getElementById('barra-pesquisa').value.toLowerCase();
-            
-            fetch('/api/produtos/ativos')
-                .then(resp => resp.json())
-                .then(produtos => {
-                    const resultados = produtos.filter(produto => 
-                        produto.nome.toLowerCase().includes(query) || 
-                        produto.marca.toLowerCase().includes(query) ||
-                        (produto.descricao && produto.descricao.toLowerCase().includes(query))
-                    );
-
-                    let lista = document.getElementById('lista-produtos');
-                    lista.innerHTML = "";
-                    if (resultados.length > 0) {
-                        resultados.forEach(produto => {
-                            let div = document.createElement('div');
-                            div.className = 'produto';
-                            const precoComDesconto = produto.precoOriginal * (1 - produto.desconto / 100);
-                            div.innerHTML = `
-                                <div class="produto-img">
-                                    <img src="${produto.caminhoImagem}" alt="${produto.nome}" />
-                                </div>
-                                <strong>${produto.nome}</strong>
-                                <small>${produto.marca}</small>
-                                ${produto.descricao ? `<span>${produto.descricao}</span>` : ''}
-                                <span>Capacidade: ${produto.capacidade}</span>
-                            `;
-
-                            if (produto.desconto > 0) {
-                                div.innerHTML += `
-                                    <div class="preco" style="text-align: center;">
-                                        <span style="text-decoration: line-through; color: var(--cinza);">Preço Original: R$ ${produto.precoOriginal.toFixed(2)}</span><br>
-                                        <span>Preço com Desconto: <strong style="color: var(--azul-claro);">R$${precoComDesconto.toFixed(2)}</strong></span><br>
-                                        <span>Desconto: ${produto.desconto}%</span>
-                                    </div>
-                                `;
-                            } else {
-                                div.innerHTML += `<div class="preco">Preço: R$${produto.preco.toFixed(2)}</div>`;
-                            }
-
-                            div.innerHTML += `
-                                <button class="btn-detalhes" onclick="window.location.href='produto.html?id=${produto.codigo}'">
-                                    <i class="fa fa-search"></i> Ver detalhes
-                                </button>
-                            `;
-                            lista.appendChild(div);
-                        });
-                    } else {
-                        lista.innerHTML = "<p>Nenhum produto encontrado.</p>";
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('lista-produtos').innerText = "Erro ao carregar produtos!";
-                    console.error(err);
-                });
+            window.location.href = `produtos.html?search=${encodeURIComponent(query)}`;
         }
 
         function atualizarNavegacao() {
