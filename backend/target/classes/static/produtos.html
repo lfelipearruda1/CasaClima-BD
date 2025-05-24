@@ -168,6 +168,23 @@
             background: var(--azul-claro);
         }
 
+        .produto span[style*="line-through"] {
+            color: var(--cinza);
+        }
+
+        .produto .preco {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--azul-claro);
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .produto .preco span,
+        .produto .preco strong {
+            display: inline;
+        }
+
         footer {
             background: var(--branco);
             margin-top: 40px;
@@ -298,6 +315,7 @@
                 produtos.forEach(produto => {
                     let div = document.createElement('div');
                     div.className = 'produto';
+                    const precoComDesconto = produto.precoOriginal * (1 - produto.desconto / 100);
                     div.innerHTML = `
                         <div class="produto-img">
                             <img src="${produto.caminhoImagem}" alt="${produto.nome}" />
@@ -306,7 +324,21 @@
                         <small>${produto.marca}</small>
                         ${produto.descricao ? `<span>${produto.descricao}</span>` : ''}
                         <span>Capacidade: ${produto.capacidade}</span>
-                        <div class="preco">R$ ${produto.preco.toFixed(2)}</div>
+                    `;
+
+                    if (produto.desconto > 0) {
+                        div.innerHTML += `
+                            <div class="preco">
+                                <span style="text-decoration: line-through; color: var(--cinza);">Preço Original: R$ ${produto.precoOriginal.toFixed(2)}</span><br>
+                                <span>Preço com Desconto: <strong style="color: var(--azul-claro);">R$${precoComDesconto.toFixed(2)}</strong></span><br>
+                                <span>Desconto: ${produto.desconto}%</span>
+                            </div>
+                        `;
+                    } else {
+                        div.innerHTML += `<div class="preco">Preço: R$${produto.preco.toFixed(2)}</div>`;
+                    }
+
+                    div.innerHTML += `
                         <button class="btn-detalhes" onclick="window.location.href='produto.html?id=${produto.codigo}'">
                             <i class="fa fa-search"></i> Ver detalhes
                         </button>

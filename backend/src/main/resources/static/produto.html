@@ -18,7 +18,6 @@
             justify-content: flex-start;
             min-height: 100vh;
         }
-
         .carrinho-bar {
             width: 100%;
             padding: 10px 0;
@@ -31,7 +30,6 @@
             justify-content: flex-end;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
-
         .carrinho-link {
             margin-right: 20px;
             text-decoration: none;
@@ -42,11 +40,9 @@
             border-radius: 8px;
             transition: background 0.2s;
         }
-
         .carrinho-link:hover {
             background-color: #3657b3;
         }
-
         .produto-detalhe {
             max-width: 800px;
             width: 100%;
@@ -63,12 +59,10 @@
             backdrop-filter: blur(7px);
             margin-top: 70px;
         }
-
         h2 {
             color: #1e3a8a;
             margin-bottom: 20px;
         }
-
         .info-produto span {
             display: flex;
             align-items: center;
@@ -76,7 +70,6 @@
             margin: 10px 0;
             font-size: 1.08rem;
         }
-
         .produto-img {
             width: 100%;
             max-width: 300px;
@@ -86,13 +79,11 @@
             box-shadow: 0 2px 12px rgba(30,58,138,0.10);
             border: 2.5px solid #fff;
         }
-
         .produto-img img {
             width: 100%;
             height: auto;
             object-fit: contain;
         }
-
         button {
             padding: 13px 0;
             width: 100%;
@@ -107,12 +98,10 @@
             transition: background 0.3s, transform 0.2s;
             margin-top: 10px;
         }
-
         button:hover {
             background: #3657b3;
             transform: scale(1.03);
         }
-
         #msg {
             margin-top: 20px;
             color: #0a8710;
@@ -121,9 +110,7 @@
             min-height: 22px;
             transition: color 0.2s;
         }
-
         #msg.error { color: #e63946; }
-
         input[type='number'] {
             width: 70px;
             padding: 8px 10px;
@@ -135,23 +122,19 @@
             transition: border 0.2s;
             box-sizing: border-box;
         }
-
         input[type='number']:focus {
             border: 1.5px solid #3657b3;
             outline: none;
         }
-
         input[type='checkbox'] {
             accent-color: #1e3a8a;
             width: 18px;
             height: 18px;
             margin-right: 6px;
         }
-
         label {
             font-weight: bold;
         }
-
         @media (max-width: 600px) {
             .produto-detalhe { max-width: 98vw; padding: 12px 2vw; }
             .produto-img { max-width: 100%; }
@@ -214,7 +197,18 @@
                 document.getElementById('marca').innerText = 'Marca: ' + produto.marca;
                 document.getElementById('descricao').innerText = 'Descrição: ' + (produto.descricao || '---');
                 document.getElementById('capacidade').innerText = 'Capacidade: ' + produto.capacidade;
-                document.getElementById('preco').innerText = 'Preço: R$ ' + produto.preco.toFixed(2);
+
+                const precoElement = document.getElementById('preco');
+                if (produto.desconto > 0) {
+                    const precoComDesconto = produto.precoOriginal * (1 - produto.desconto / 100);
+                    precoElement.innerHTML = `
+                        <span style="text-decoration: line-through; color: #888;">R$ ${produto.precoOriginal.toFixed(2)}</span>
+                        <span> R$ ${precoComDesconto.toFixed(2)} (${produto.desconto}% de desconto)</span>
+                    `;
+                } else {
+                    precoElement.innerText = 'Preço: R$ ' + produto.preco.toFixed(2);
+                }
+
                 const imgElement = document.getElementById('produtoImagem');
                 imgElement.src = produto.caminhoImagem;
                 imgElement.alt = `Imagem do produto: ${produto.nome}`;
