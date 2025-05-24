@@ -16,7 +16,7 @@
             margin-left: 18px;
         }
         .produtos { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 40px;}
-        .produto { border: 1px solid #ccc; border-radius: 8px; padding: 20px; width: 200px; }
+        .produto { border: 1px solid #ccc; border-radius: 8px; padding: 20px; width: 250px; }
         .botoes, #navegacao { display: flex; gap: 12px; align-items: center; }
         button { padding: 8px 16px; cursor: pointer; }
         .perfil-icon {
@@ -179,6 +179,7 @@
             <label>Descrição:<input type="text" id="prod-desc"></label>
             <label>Capacidade:<input type="text" id="prod-capa"></label>
             <label>Preço (R$):<input type="number" id="prod-preco" step="0.01" required></label>
+            <label>Desconto (%):<input type="number" id="prod-desconto" step="0.1"></label>
             <label>Marca:<input type="text" id="prod-marca"></label>
             <button type="submit" id="produtoFormSubmit">Cadastrar</button>
             <button type="button" id="prod-cancel">Cancelar</button>
@@ -226,22 +227,33 @@
         fetch('/api/produtos/ativos')
             .then(resp => resp.json())
             .then(produtos => {
-                let lista = document.getElementById('lista-produtos');
+                const lista = document.getElementById('lista-produtos');
                 lista.innerHTML = "";
                 produtos.forEach(produto => {
-                    let div = document.createElement('div');
+                    const div = document.createElement('div');
                     div.className = 'produto';
+                    const precoComDesconto = produto.precoOriginal * (1 - produto.desconto / 100);
                     div.innerHTML = `
                         <strong>${produto.nome}</strong><br>
                         <small>${produto.marca}</small><br>
                         ${produto.descricao ? `<span>${produto.descricao}</span><br>` : ''}
                         <span>Capacidade: ${produto.capacidade}</span><br>
-                        <span><b>Preço: R$ ${produto.preco.toFixed(2)}</b></span>
+                        <span>Preço Original: R$ ${produto.precoOriginal.toFixed(2)}</span><br>
                     `;
+
+                    if (produto.desconto > 0) {
+                        div.innerHTML += `
+                            <span>Desconto: ${produto.desconto}%</span><br>
+                            <span><b>Preço com Desconto: R$ ${precoComDesconto.toFixed(2)}</b></span>
+                        `;
+                    }
+
                     lista.appendChild(div);
                 });
             })
-            .catch(() => { document.getElementById('lista-produtos').innerText = "Erro ao carregar produtos!"; });
+            .catch(() => {
+                document.getElementById('lista-produtos').innerText = "Erro ao carregar produtos!";
+            });
 
         function renderAdminLista() {
             fetch('/api/produtos')
@@ -289,6 +301,7 @@
             document.getElementById("prod-desc").value = '';
             document.getElementById("prod-capa").value = '';
             document.getElementById("prod-preco").value = '';
+            document.getElementById("prod-desconto").value = '';
             document.getElementById("prod-marca").value = '';
             document.getElementById("msg-prod").innerText = "";
             setTimeout(() => document.getElementById("prod-nome").focus(), 200);
@@ -303,28 +316,34 @@
 
         document.getElementById("produtoForm").onsubmit = function (e) {
             e.preventDefault();
+            const preco = parseFloat(document.getElementById("prod-preco").value) || 0.0;
             const prod = {
                 nome: document.getElementById("prod-nome").value,
                 descricao: document.getElementById("prod-desc").value,
                 capacidade: document.getElementById("prod-capa").value,
-                preco: parseFloat(document.getElementById("prod-preco").value),
-                marca: document.getElementById("prod-marca").value
+                precoOriginal: preco,
+                desconto: parseFloat(document.getElementById("prod-desconto").value) || 0.0,
+                marca: document.getElementById("prod-marca").value,
+                caminhoImagem: produtoEditando?.caminhoImagem || '' 
             };
 
-            if (!prod.nome || !prod.preco) {
+            if (!prod.nome || preco <= 0) {
                 document.getElementById("msg-prod").innerText = "Preencha nome e preço!";
                 return;
             }
 
             let method = "POST";
             let sucessoMsg = "Produto cadastrado com sucesso!";
-            if (produtoEditando) {
-                prod.codigo = produtoEditando; 
+            let url = '/api/produtos';
+
+            if (produtoEditando && produtoEditando.codigo) {
+                prod.codigo = produtoEditando.codigo; 
                 method = "PUT";
                 sucessoMsg = "Produto alterado com sucesso!";
+                url = `/api/produtos/${produtoEditando.codigo}`;
             }
 
-            fetch('/api/produtos', {
+            fetch(url, {
                 method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(prod)
@@ -343,13 +362,13 @@
                     }, 1200);
                 } else {
                     let msg = "Erro ao salvar!";
-                    if(resp && resp.error){
+                    if (resp && resp.error) {
                         msg += " " + resp.error;
                     }
                     document.getElementById("msg-prod").innerText = msg;
                 }
             })
-            .catch((err) => {
+            .catch(() => {
                 document.getElementById("msg-prod").innerText = "Erro de conexão.";
             });
         };
@@ -361,9 +380,14 @@
                     document.getElementById("prod-nome").value = produto.nome || '';
                     document.getElementById("prod-desc").value = produto.descricao || '';
                     document.getElementById("prod-capa").value = produto.capacidade || '';
-                    document.getElementById("prod-preco").value = produto.preco || '';
+                    document.getElementById("prod-preco").value = produto.precoOriginal || ''; 
+                    document.getElementById("prod-desconto").value = produto.desconto || '';
                     document.getElementById("prod-marca").value = produto.marca || '';
-                    produtoEditando = codigo;
+
+                    produtoEditando = {
+                        codigo: codigo,
+                        caminhoImagem: produto.caminhoImagem 
+                    };
                     document.getElementById("produtoForm").classList.add('active');
                     document.getElementById("showAddProduct").style.display = "none";
                     document.getElementById("formTitle").innerText = "Editar Produto";

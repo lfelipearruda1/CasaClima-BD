@@ -3,7 +3,6 @@ package com.casaclima.backend.dao;
 import com.casaclima.backend.model.Pedido;
 import com.casaclima.backend.model.Produto;
 import com.casaclima.backend.model.Instalacao;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 

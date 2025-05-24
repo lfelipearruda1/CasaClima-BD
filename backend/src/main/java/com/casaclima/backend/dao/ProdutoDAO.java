@@ -23,6 +23,11 @@ public class ProdutoDAO {
         return db.query("SELECT * FROM Produto WHERE ativo = true", new BeanPropertyRowMapper<>(Produto.class));
     }
 
+    public List<Produto> listarTopDescontos() {
+        String sql = "SELECT * FROM Produto WHERE ativo = true AND desconto > 0 ORDER BY desconto DESC LIMIT 3";
+        return db.query(sql, new BeanPropertyRowMapper<>(Produto.class));
+    }
+
     public boolean desativar(int codigo) {
         String sql = "UPDATE Produto SET ativo = false WHERE codigo = ?";
         return db.update(sql, codigo) > 0;
@@ -42,24 +47,37 @@ public class ProdutoDAO {
     }
 
     public boolean inserir(Produto produto) {
-        String sql = "INSERT INTO Produto (nome, descricao, capacidade, preco, marca) VALUES (?, ?, ?, ?, ?)";
+        if (produto.getAtivo() == null) {
+            produto.setAtivo(true); 
+        }
+
+        double precoComDesconto = produto.getPrecoOriginal() * (1 - produto.getDesconto() / 100);
+        String sql = "INSERT INTO Produto (nome, descricao, capacidade, precoOriginal, preco, desconto, marca, caminho_imagem, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         return db.update(sql,
             produto.getNome(),
             produto.getDescricao(),
             produto.getCapacidade(),
-            produto.getPreco(),
-            produto.getMarca()
+            produto.getPrecoOriginal(),
+            precoComDesconto,           
+            produto.getDesconto(),
+            produto.getMarca(),
+            produto.getCaminhoImagem(),
+            produto.getAtivo()
         ) > 0;
     }
 
     public boolean atualizar(Produto produto) {
-        String sql = "UPDATE Produto SET nome=?, descricao=?, capacidade=?, preco=?, marca=? WHERE codigo=?";
+        double precoComDesconto = produto.getPrecoOriginal() * (1 - produto.getDesconto() / 100);
+        String sql = "UPDATE Produto SET nome=?, descricao=?, capacidade=?, preco=?, desconto=?, marca=?, caminho_imagem=?, ativo=? WHERE codigo=?";
         return db.update(sql,
             produto.getNome(),
             produto.getDescricao(),
             produto.getCapacidade(),
-            produto.getPreco(),
+            precoComDesconto,  
+            produto.getDesconto(),
             produto.getMarca(),
+            produto.getCaminhoImagem(),
+            produto.getAtivo(),
             produto.getCodigo()
         ) > 0;
     }
