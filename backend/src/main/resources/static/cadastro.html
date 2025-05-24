@@ -71,6 +71,11 @@
             background-color: #3657b3;
         }
 
+        #msg.success {
+            color: #2bc47f;
+            font-weight: bold;
+        }
+
         #msg {
             margin-top: 18px;
             color: #e63946;
@@ -148,6 +153,10 @@
                 <input type="text" id="nome" required placeholder="Nome">
             </div>
             <div class="input-group">
+                <i class="fa fa-envelope"></i>
+                <input type="email" id="email" required placeholder="E-mail">
+            </div>
+            <div class="input-group">
                 <i class="fa fa-road"></i>
                 <input type="text" id="rua" required placeholder="Rua">
             </div>
@@ -191,6 +200,7 @@
             e.preventDefault();
 
             const nome = document.getElementById("nome").value.trim();
+            const email = document.getElementById("email").value.trim();
             const rua = document.getElementById("rua").value.trim();
             const numeroVal = document.getElementById("numero").value;
             const numero = numeroVal === "" ? null : parseInt(numeroVal);
@@ -202,31 +212,40 @@
             const cnpj = cnpjVal === "" ? null : cnpjVal;
             const senha = document.getElementById("senha").value;
 
+            const msg = document.getElementById("msg");
             if (cpf.length !== 11) {
-                document.getElementById("msg").innerText = "O CPF deve ter exatamente 11 dígitos.";
+                msg.innerText = "O CPF deve ter exatamente 11 dígitos.";
+                msg.classList.remove("success");
                 return;
             }
             if (cnpj && cnpj.length !== 14) {
-                document.getElementById("msg").innerText = "O CNPJ deve ter 14 dígitos.";
+                msg.innerText = "O CNPJ deve ter 14 dígitos.";
+                msg.classList.remove("success");
                 return;
             }
 
-            const data = { nome, rua, numero, cidade, bairro, telefone, cpf, cnpj, senha };
+            const data = { nome, rua, numero, cidade, bairro, telefone, cpf, cnpj, email, senha };
             fetch('/clientes', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             })
             .then(r => {
-                if(r.ok) {
-                    document.getElementById("msg").innerHTML = "Cadastro realizado com sucesso! <a href='login.html'>Faça login</a>";
+                if (r.ok) {
+                    msg.innerText = "Usuário cadastrado! Redirecionando...";
+                    msg.classList.add("success");
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
                     document.getElementById("cadastroForm").reset();
                 } else {
-                    document.getElementById("msg").innerHTML = "Erro ao cadastrar. Tente novamente.";
+                    msg.innerText = "Erro ao cadastrar. Tente novamente.";
+                    msg.classList.remove("success");
                 }
             })
             .catch(err => {
-                document.getElementById("msg").innerText = "Erro de conexão.";
+                msg.innerText = "Erro de conexão.";
+                msg.classList.remove("success");
             });
         }
     </script>

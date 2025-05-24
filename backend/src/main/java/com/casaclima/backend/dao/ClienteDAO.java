@@ -20,15 +20,15 @@ public class ClienteDAO {
 
     public int inserir(Cliente c) {
         return db.update(
-            "INSERT INTO Cliente (nome, rua, numero, cidade, bairro, telefone, cpf, cnpj, senha) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            c.getNome(), c.getRua(), c.getNumero(), c.getCidade(), c.getBairro(), c.getTelefone(), c.getCpf(), c.getCnpj(), c.getSenha()
+            "INSERT INTO Cliente (nome, rua, numero, cidade, bairro, telefone, cpf, cnpj, email, senha) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            c.getNome(), c.getRua(), c.getNumero(), c.getCidade(), c.getBairro(), c.getTelefone(), c.getCpf(), c.getCnpj(), c.getEmail(), c.getSenha()
         );
     }
 
     public int atualizar(Cliente c) {
         return db.update(
-            "UPDATE Cliente SET nome=?, rua=?, numero=?, cidade=?, bairro=?, telefone=?, cpf=?, cnpj=?, senha=? WHERE cod_cliente=?",
-            c.getNome(), c.getRua(), c.getNumero(), c.getCidade(), c.getBairro(), c.getTelefone(), c.getCpf(), c.getCnpj(), c.getSenha(), c.getCodCliente()
+            "UPDATE Cliente SET nome=?, rua=?, numero=?, cidade=?, bairro=?, telefone=?, cpf=?, cnpj=?, email=?, senha=? WHERE cod_cliente=?",
+            c.getNome(), c.getRua(), c.getNumero(), c.getCidade(), c.getBairro(), c.getTelefone(), c.getCpf(), c.getCnpj(), c.getEmail(), c.getSenha(), c.getCodCliente()
         );
     }
 

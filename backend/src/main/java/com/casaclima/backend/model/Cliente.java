@@ -3,6 +3,7 @@ package com.casaclima.backend.model;
 public class Cliente {
     private int codCliente;
     private String nome;
+    private String email;
     private String rua;
     private int numero;
     private String cidade;
@@ -26,6 +27,14 @@ public class Cliente {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getEmail() { 
+        return email;
+    }
+
+    public void setEmail(String email) { 
+        this.email = email;
     }
 
     public String getRua() {
