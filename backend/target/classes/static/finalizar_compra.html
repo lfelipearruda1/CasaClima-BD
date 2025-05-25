@@ -331,10 +331,10 @@
                     codigo: item.codigo,
                     quantidade: item.qtd
                 })),
-                instalacoes: [] // Adicione instalações conforme necessário
+                instalacoes: [] 
             };
 
-            fetch("/pedidos", { // Ajuste a URL conforme necessário
+            fetch("/pedidos", { 
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -364,7 +364,6 @@
         }
 
         function obterClienteId() {
-            // Implementar lógica para obter o ID do cliente logado, por exemplo, de localStorage
             return parseInt(localStorage.getItem('clienteId'));
         }
     </script>

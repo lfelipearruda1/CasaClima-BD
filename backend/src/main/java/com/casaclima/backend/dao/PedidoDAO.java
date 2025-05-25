@@ -60,7 +60,6 @@ public class PedidoDAO {
             String sqlPedido = "INSERT INTO Pedido (data_realizacao, valor_total, status, metodo_pagamento, fk_Cliente_cod_cliente, fk_Transporte_ID_transporte, endereco_rua, endereco_numero, endereco_cidade, endereco_bairro, endereco_cep) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement stmtPedido = connection.prepareStatement(sqlPedido, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                // Convertendo java.util.Date para java.sql.Date
                 if (pedido.getDataDeRealizacao() != null) {
                     stmtPedido.setDate(1, new Date(pedido.getDataDeRealizacao().getTime()));
                 } else {
@@ -86,7 +85,6 @@ public class PedidoDAO {
                     }
                 }
 
-                // Evitar NullPointerException
                 if (pedido.getInstalacoes() != null) {
                     inserirInstalacoes(pedido, connection);
                 }
