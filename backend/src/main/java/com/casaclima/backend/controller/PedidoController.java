@@ -1,6 +1,7 @@
 package com.casaclima.backend.controller;
 
 import com.casaclima.backend.dao.PedidoDAO;
+import com.casaclima.backend.dto.PedidoDetalhadoDTO;
 import com.casaclima.backend.dto.VendaMensalDTO;
 import com.casaclima.backend.model.Pedido;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,17 @@ public class PedidoController {
     @GetMapping
     public List<Pedido> listar() {
         return dao.listar();
+    }
+
+    @GetMapping("/detalhados")
+    public ResponseEntity<List<PedidoDetalhadoDTO>> listarPedidosDetalhados() {
+        try {
+            List<PedidoDetalhadoDTO> pedidosDetalhados = dao.listarPedidosDetalhados();
+            return ResponseEntity.ok(pedidosDetalhados);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PostMapping

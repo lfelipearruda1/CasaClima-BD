@@ -212,7 +212,7 @@
                 <span class="perfil-icon">👤</span>
                 Olá, Funcionário
             </button>
-            <button onclick="localStorage.removeItem('funcionarioLogado');window.location.href='login-funcionario.html'">Sair</button>
+            <button onclick="localStorage.removeItem('funcionarioLogado');window.location.href='funcionario.html'">Sair</button>
         </div>
     </header>
 
@@ -240,6 +240,7 @@
             <button type="button" id="prod-cancel">Cancelar</button>
             <div id="msg-prod"></div>
         </form>
+        <button class="btn-dashboard" onclick="location.href='verificar_pedidos.html'">Ver todos os pedidos</button>
         <button class="btn-dashboard" onclick="location.href='dashboard_vendas.html'">Ver Dashboard de Vendas</button>
         <button class="btn-clientes" onclick="location.href='clientes.html'">Gerenciar Clientes</button>
         <button class="btn-dashboard-clientes" onclick="location.href='dashboard_clientes.html'">Ver Dashboard de Clientes</button>

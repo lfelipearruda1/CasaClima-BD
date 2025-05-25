@@ -3,10 +3,11 @@ package com.casaclima.backend.dao;
 import com.casaclima.backend.model.Pedido;
 import com.casaclima.backend.model.Produto;
 import com.casaclima.backend.dto.VendaMensalDTO;
+import com.casaclima.backend.dto.PedidoDetalhadoDTO;
 import com.casaclima.backend.model.Instalacao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import java.sql.Connection;
 import java.sql.Date;   
 import java.sql.PreparedStatement;
@@ -156,5 +157,29 @@ public class PedidoDAO {
                 rs.getDouble("valor")
             )
         );
+    }
+
+    public List<PedidoDetalhadoDTO> listarPedidosDetalhados() {
+        String sql =
+            "SELECT " +
+            "   p.numero AS idPedido, " +
+            "   c.nome AS nomeCliente, " +
+            "   c.cod_cliente AS idCliente, " +
+            "   pr.codigo AS idProduto, " +
+            "   pr.nome AS nomeProduto, " +
+            "   pr.descricao AS detalheProduto, " +
+            "   pr.marca AS marcaProduto, " +
+            "   pp.quantidade AS quantidadeProduto, " +
+            "   CASE WHEN pi.fk_Pedido_numero IS NOT NULL THEN 'Sim' ELSE 'Não' END AS instalacao, " +
+            "   COALESCE(pi.quantidade, 0) AS quantidadeInstalacao, " +
+            "   p.status AS statusPedido " +
+            "FROM " +
+            "   Pedido p " +
+            "JOIN Cliente c ON p.fk_Cliente_cod_cliente = c.cod_cliente " +
+            "JOIN Pedido_Produto pp ON p.numero = pp.fk_Pedido_numero " +
+            "JOIN Produto pr ON pp.fk_Produto_codigo = pr.codigo " +
+            "LEFT JOIN Pedido_Instalacao pi ON p.numero = pi.fk_Pedido_numero";
+
+        return db.query(sql, new BeanPropertyRowMapper<>(PedidoDetalhadoDTO.class));
     }
 }

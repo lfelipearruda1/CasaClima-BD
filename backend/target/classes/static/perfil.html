@@ -23,7 +23,6 @@
             position: relative;
             overflow-x: hidden;
         }
-        /* Bolhas decorativas */
         .bubble {
             position: absolute;
             border-radius: 50%;
@@ -167,12 +166,16 @@
         <div class="perfil-avatar">
             <i class="fa-solid fa-user"></i>
         </div>
-        <div class="perfil-nome">Usuário Teste</div>
+        <div class="perfil-nome" id="perfil-nome"></div>
         <div class="perfil-sub">Bem-vindo(a) de volta!</div>
         <form id="perfilForm">
             <div class="input-group">
                 <i class="fa fa-user"></i>
                 <input type="text" id="nome" required placeholder="Nome">
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope"></i>
+                <input type="email" id="email" required placeholder="Email">
             </div>
             <div class="input-group">
                 <i class="fa fa-road"></i>
@@ -209,10 +212,13 @@
     </div>
     <script>
         let cliente = JSON.parse(localStorage.getItem("clienteLogado"));
-        if(!cliente) {
+        if (!cliente) {
             window.location.href = "login.html";
         }
+
+        document.getElementById("perfil-nome").innerText = cliente.nome; 
         document.getElementById("nome").value = cliente.nome;
+        document.getElementById("email").value = cliente.email;
         document.getElementById("rua").value = cliente.rua;
         document.getElementById("numero").value = cliente.numero;
         document.getElementById("cidade").value = cliente.cidade;
@@ -226,6 +232,7 @@
             const atualizado = {
                 codCliente: cliente.codCliente,
                 nome: document.getElementById("nome").value.trim(),
+                email: document.getElementById("email").value.trim(), 
                 rua: document.getElementById("rua").value.trim(),
                 numero: parseInt(document.getElementById("numero").value),
                 cidade: document.getElementById("cidade").value.trim(),

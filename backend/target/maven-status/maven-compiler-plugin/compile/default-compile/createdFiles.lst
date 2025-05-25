@@ -13,6 +13,7 @@ com\casaclima\backend\controller\InstalacaoController.class
 com\casaclima\backend\dao\AvaliacaoDAO.class
 com\casaclima\backend\model\Cliente.class
 com\casaclima\backend\model\Produto.class
+com\casaclima\backend\dto\PedidoDetalhadoDTO.class
 com\casaclima\backend\controller\FuncionarioController.class
 com\casaclima\backend\dao\FuncionarioDAO.class
 com\casaclima\backend\dao\ProdutoDAO.class
