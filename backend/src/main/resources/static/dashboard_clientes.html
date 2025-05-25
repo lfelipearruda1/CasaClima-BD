@@ -75,7 +75,7 @@
 
             const meses = data.map(item => {
                 const dataObj = new Date();
-                dataObj.setMonth(item.mes - 1); // Ajuste para índice do mês
+                dataObj.setMonth(item.mes - 1); 
                 return dataObj.toLocaleString('pt-BR', { month: 'long' });
             });
             const quantidades = data.map(item => item.total);

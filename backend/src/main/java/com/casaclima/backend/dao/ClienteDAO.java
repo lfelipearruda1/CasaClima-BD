@@ -30,10 +30,11 @@ public class ClienteDAO {
     }
 
     public List<TopClienteDTO> listarTopClientes() {
-        String sql = "SELECT c.nome, SUM(p.valor_total) AS valor " +
-                     "FROM Pedido p " +
-                     "JOIN Cliente c ON p.cod_cliente = c.cod_cliente " +
-                     "GROUP BY c.nome ORDER BY valor DESC LIMIT 5";
+        String sql = "SELECT c.nome AS nome, SUM(p.valor_total) AS valor " +
+                    "FROM Pedido p " +
+                    "JOIN Cliente c ON p.fk_Cliente_cod_cliente = c.cod_cliente " +
+                    "GROUP BY c.nome " +
+                    "ORDER BY valor DESC LIMIT 5";
         return db.query(sql, new BeanPropertyRowMapper<>(TopClienteDTO.class));
     }
 
