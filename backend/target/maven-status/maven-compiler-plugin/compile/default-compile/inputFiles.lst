@@ -17,6 +17,10 @@ C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casacli
 C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\dao\ProdutoDAO.java
 C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\dao\PromocaoDAO.java
 C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\dao\TransporteDAO.java
+C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\dto\ClienteMesDTO.java
+C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\dto\ProdutoDTO.java
+C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\dto\TopClienteDTO.java
+C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\dto\VendaMensalDTO.java
 C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\model\Avaliacao.java
 C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\model\Carrinho.java
 C:\Users\felip\Desktop\Nova pasta\CasaClima-BD\backend\src\main\java\com\casaclima\backend\model\Cliente.java

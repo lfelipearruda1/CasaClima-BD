@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Clientes - Casa Clima</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .btn-excluir {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn-excluir:hover {
+            background-color: #c9302c;
+        }
+        .btn-voltar {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .btn-voltar:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciar Clientes</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="lista-clientes">
+                <!-- Clientes irão aqui -->
+            </tbody>
+        </table>
+        <a href="admin.html" class="btn-voltar">Voltar</a>
+    </div>
+
+    <script>
+        function carregarClientes() {
+            fetch('/clientes')
+                .then(resp => resp.json())
+                .then(clientes => {
+                    const lista = document.getElementById('lista-clientes');
+                    lista.innerHTML = '';
+                    clientes.forEach(cliente => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${cliente.codCliente}</td>
+                            <td>${cliente.nome}</td>
+                            <td>${cliente.email}</td>
+                            <td><button class="btn-excluir" onclick="excluirCliente(${cliente.codCliente})">Excluir</button></td>
+                        `;
+                        lista.appendChild(tr);
+                    });
+                })
+                .catch(() => {
+                    alert('Erro ao carregar clientes!');
+                });
+        }
+
+        function excluirCliente(id) {
+            if (confirm('Deseja realmente excluir este cliente?')) {
+                fetch(`/clientes/${id}`, { method: 'DELETE' })
+                    .then(resp => {
+                        if (resp.ok) {
+                            carregarClientes();
+                        } else {
+                            alert('Erro ao excluir cliente.');
+                        }
+                    })
+                    .catch(() => alert('Erro de conexão ao excluir cliente.'));
+            }
+        }
+
+        carregarClientes();
+    </script>
+</body>
+</html>

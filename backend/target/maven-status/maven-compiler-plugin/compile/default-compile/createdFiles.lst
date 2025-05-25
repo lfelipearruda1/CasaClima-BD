@@ -1,6 +1,8 @@
+com\casaclima\backend\dto\VendaMensalDTO.class
 com\casaclima\backend\util\Conexao.class
 com\casaclima\backend\controller\ProdutoController.class
 com\casaclima\backend\controller\CarrinhoController.class
+com\casaclima\backend\dto\ClienteMesDTO.class
 com\casaclima\backend\BackendApplication.class
 com\casaclima\backend\model\Funcionario.class
 com\casaclima\backend\model\Avaliacao.class
@@ -17,6 +19,7 @@ com\casaclima\backend\dao\ProdutoDAO.class
 com\casaclima\backend\model\Transporte.class
 com\casaclima\backend\dao\TransporteDAO.class
 com\casaclima\backend\model\Instalacao.class
+com\casaclima\backend\dto\TopClienteDTO.class
 com\casaclima\backend\model\ItemDoCarrinho.class
 com\casaclima\backend\model\Pedido.class
 com\casaclima\backend\dao\InstalacaoDAO.class
@@ -27,4 +30,5 @@ com\casaclima\backend\controller\ClienteController.class
 com\casaclima\backend\model\Carrinho.class
 com\casaclima\backend\dao\ClienteDAO.class
 com\casaclima\backend\dao\CarrinhoDAO.class
+com\casaclima\backend\dto\ProdutoDTO.class
 com\casaclima\backend\model\Promocao.class

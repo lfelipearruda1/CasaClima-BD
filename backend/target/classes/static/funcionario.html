@@ -43,7 +43,7 @@
             const cpf = document.getElementById("cpf").value.trim();
             const senha = document.getElementById("senha").value;
 
-            fetch('http://localhost:8080/funcionario')
+            fetch('http://localhost:8080/api/funcionarios')
                 .then(r => r.json())
                 .then(funcionarios => {
                     const func = funcionarios.find(f =>

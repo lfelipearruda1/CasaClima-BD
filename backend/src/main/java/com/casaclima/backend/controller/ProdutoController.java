@@ -1,8 +1,10 @@
 package com.casaclima.backend.controller;
 
 import com.casaclima.backend.dao.ProdutoDAO;
+import com.casaclima.backend.dto.ProdutoDTO;
 import com.casaclima.backend.model.Produto;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -150,4 +152,15 @@ public class ProdutoController {
             return ResponseEntity.status(500).body("Erro ao salvar imagem");
         }
     }
+
+    @GetMapping("/dashboard/maisVendidos")
+    public ResponseEntity<List<ProdutoDTO>> getProdutosMaisVendidos() {
+        try {
+            List<ProdutoDTO> produtosMaisVendidos = dao.findMaisVendidos();
+            return ResponseEntity.ok(produtosMaisVendidos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    } 
 }

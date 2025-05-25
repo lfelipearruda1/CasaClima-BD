@@ -2,6 +2,8 @@ package com.casaclima.backend.controller;
 
 import com.casaclima.backend.dao.ClienteDAO;
 import com.casaclima.backend.model.Cliente;
+import com.casaclima.backend.dto.ClienteMesDTO;
+import com.casaclima.backend.dto.TopClienteDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,21 @@ public class ClienteController {
     @GetMapping
     public List<Cliente> listar() {
         return dao.listar();
+    }
+
+    @GetMapping("/total")
+    public int totalClientes() {
+        return dao.contarTotalClientes();
+    }
+
+    @GetMapping("/novos-por-mes")
+    public List<ClienteMesDTO> novosClientesPorMes() {
+        return dao.listarNovosClientesPorMes();
+    }
+
+    @GetMapping("/top-clientes")
+    public List<TopClienteDTO> topClientes() {
+        return dao.listarTopClientes();
     }
 
     @PostMapping

@@ -2,6 +2,7 @@ package com.casaclima.backend.dao;
 
 import com.casaclima.backend.model.Pedido;
 import com.casaclima.backend.model.Produto;
+import com.casaclima.backend.dto.VendaMensalDTO;
 import com.casaclima.backend.model.Instalacao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -136,5 +137,24 @@ public class PedidoDAO {
                 stmtProd.executeUpdate();
             }
         }
+    }
+
+    public double findTotalVendas() {
+        String sql = "SELECT SUM(valor_total) FROM Pedido";
+        return db.queryForObject(sql, Double.class);
+    }
+
+    public List<VendaMensalDTO> findVendasMensais() {
+        String sql = "SELECT DATE_FORMAT(data_de_realizacao, '%Y-%m') AS mes, SUM(valor_total) AS valor " +
+                    "FROM Pedido " +
+                    "GROUP BY DATE_FORMAT(data_de_realizacao, '%Y-%m') " +
+                    "ORDER BY mes";
+
+        return db.query(sql, (rs, rowNum) ->
+            new VendaMensalDTO(
+                rs.getString("mes"),
+                rs.getDouble("valor")
+            )
+        );
     }
 }

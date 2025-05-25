@@ -1,5 +1,6 @@
 package com.casaclima.backend.dao;
 
+import com.casaclima.backend.dto.ProdutoDTO;
 import com.casaclima.backend.model.Produto;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -93,5 +94,20 @@ public class ProdutoDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<ProdutoDTO> findMaisVendidos() {
+        String sql = "SELECT CONCAT(p.descricao, ' ', p.marca) AS nome_completo, SUM(pp.quantidade) AS quantidade " +
+                    "FROM Pedido_Produto pp " +
+                    "JOIN Produto p ON pp.fk_Produto_codigo = p.codigo " +
+                    "GROUP BY nome_completo " +
+                    "ORDER BY quantidade DESC LIMIT 10";
+
+        return db.query(sql, (rs, rowNum) -> 
+            new ProdutoDTO(
+                rs.getString("nome_completo"), 
+                rs.getLong("quantidade")
+            )
+        );
     }
 }

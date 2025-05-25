@@ -1,6 +1,7 @@
 package com.casaclima.backend.controller;
 
 import com.casaclima.backend.dao.PedidoDAO;
+import com.casaclima.backend.dto.VendaMensalDTO;
 import com.casaclima.backend.model.Pedido;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,28 @@ public class PedidoController {
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao cadastrar o pedido.");
+        }
+    }
+
+    @GetMapping("/dashboard/total")
+    public ResponseEntity<Double> getTotalVendas() {
+        try {
+            double totalVendas = dao.findTotalVendas();
+            return ResponseEntity.ok(totalVendas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/dashboard/tendencia")
+    public ResponseEntity<List<VendaMensalDTO>> getVendasMensais() {
+        try {
+            List<VendaMensalDTO> vendasMensais = dao.findVendasMensais();
+            return ResponseEntity.ok(vendasMensais);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }
