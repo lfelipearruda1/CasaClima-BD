@@ -223,7 +223,15 @@
     </div>
 
     <script>
-        let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+        let cliente = localStorage.getItem('clienteLogado');
+        if (!cliente) {
+            alert("Você precisa estar logado para finalizar a compra.");
+            window.location.href = 'login.html';
+        }
+
+        cliente = JSON.parse(cliente);
+        const storageKey = `carrinho_${cliente.codCliente}`;
+        let carrinho = JSON.parse(localStorage.getItem(storageKey)) || [];
 
         document.addEventListener("DOMContentLoaded", function() {
             renderResumoCompra();
@@ -264,12 +272,12 @@
             });
 
             html += `</tbody>
-                     <tfoot>
+                    <tfoot>
                         <tr>
                             <td colspan="2">Total</td>
                             <td>R$ ${total.toFixed(2)}</td>
                         </tr>
-                     </tfoot>
+                    </tfoot>
                     </table>`;
 
             resumoContainer.innerHTML = html;
@@ -317,24 +325,24 @@
             }
 
             const pedido = {
-                dataDeRealizacao: new Date().toISOString().split('T')[0], 
+                dataDeRealizacao: new Date().toISOString().split('T')[0],
                 valorTotal: calcularTotal(),
                 status: "Pendente",
                 metodoPagamento: metodoPagamento.value,
-                clienteId: obterClienteId(), 
+                clienteId: cliente.codCliente,
                 enderecoRua: endereco.rua,
                 enderecoNumero: endereco.numero,
                 enderecoCidade: endereco.cidade,
                 enderecoBairro: endereco.bairro,
                 enderecoCep: endereco.cep,
                 produtos: carrinho.map(item => ({
-                    codigo: item.codigo,
+                    codigo: item.produtoId,
                     quantidade: item.qtd
                 })),
-                instalacoes: [] 
+                instalacoes: []
             };
 
-            fetch("/pedidos", { 
+            fetch("/pedidos", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -345,7 +353,7 @@
                 if (response.ok) {
                     document.getElementById('msgFeedback').style.color = '#0a8710';
                     document.getElementById('msgFeedback').innerText = "Compra finalizada com sucesso!";
-                    localStorage.removeItem('carrinho');
+                    localStorage.removeItem(storageKey);
                     window.location.href = 'index.html';
                 } else {
                     return response.json().then(data => {
@@ -361,10 +369,6 @@
 
         function calcularTotal() {
             return carrinho.reduce((total, item) => total + (item.qtd * item.preco), 0);
-        }
-
-        function obterClienteId() {
-            return parseInt(localStorage.getItem('clienteId'));
         }
     </script>
 </body>

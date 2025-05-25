@@ -599,7 +599,7 @@
             window.location.href = `produtos.html?search=${encodeURIComponent(query)}`;
         }
 
-        function atualizarNavegacao() {
+       function atualizarNavegacao() {
             const user = localStorage.getItem("clienteLogado");
             const nav = document.getElementById("navegacao");
             let conteudoNav = "";
@@ -608,9 +608,11 @@
                 const cliente = JSON.parse(user);
                 let carrinhoCount = 0;
                 try {
-                    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+                    const storageKey = `carrinho_${cliente.codCliente}`;
+                    const carrinho = JSON.parse(localStorage.getItem(storageKey)) || [];
                     carrinhoCount = carrinho.reduce((soma, item) => soma + (item.qtd || 1), 0);
                 } catch (e) { }
+
                 let carrinhoBtn = `<a href="carrinho.html" class="carrinho-link"><i class='fa fa-shopping-cart'></i> Carrinho (<span id='carrinho-count'>${carrinhoCount}</span>)</a>`;
                 conteudoNav = `
                     <button onclick="window.location.href='perfil.html'" class="perfil-btn">

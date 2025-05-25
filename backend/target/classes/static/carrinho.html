@@ -155,7 +155,15 @@
     </header>
     <div id="carrinho"></div>
     <script>
-        let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+        const clienteData = localStorage.getItem('clienteLogado');
+        if (!clienteData) {
+            alert("Você precisa estar logado para ver o carrinho.");
+            window.location.href = 'login.html';
+        }
+
+        const cliente = JSON.parse(clienteData);
+        const storageKey = `carrinho_${cliente.codCliente}`;
+        let carrinho = JSON.parse(localStorage.getItem(storageKey)) || [];
 
         function renderCarrinho() {
             const carrinhoContainer = document.getElementById("carrinho");
@@ -220,12 +228,12 @@
                 row.classList.add('fade-out');
                 setTimeout(() => {
                     carrinho.splice(idx, 1);
-                    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+                    localStorage.setItem(storageKey, JSON.stringify(carrinho));
                     renderCarrinho();
                 }, 400);
             } else {
                 carrinho.splice(idx, 1);
-                localStorage.setItem('carrinho', JSON.stringify(carrinho));
+                localStorage.setItem(storageKey, JSON.stringify(carrinho));
                 renderCarrinho();
             }
         }

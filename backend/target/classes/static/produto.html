@@ -225,6 +225,12 @@
                 }
                 return;
             }
+            const clienteData = localStorage.getItem('clienteLogado');
+            if (!clienteData) {
+                alert("Erro: Informação do cliente não encontrada.");
+                return;
+            }
+            const cliente = JSON.parse(clienteData);
             if (!produtoGlobal) return;
 
             const qtdInput = document.getElementById('qtd');
@@ -236,34 +242,27 @@
                 return;
             }
 
-            let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-            let encontrado = carrinho.find(item => item.codigo === produtoGlobal.codigo);
+            const storageKey = `carrinho_${cliente.codCliente}`;
+            let carrinho = JSON.parse(localStorage.getItem(storageKey)) || [];
+            let encontrado = carrinho.find(item => item.produtoId === produtoGlobal.codigo);
 
             if (encontrado) {
                 encontrado.qtd += qtd;
             } else {
-                carrinho.push({ ...produtoGlobal, qtd: qtd });
+                carrinho.push({ ...produtoGlobal, produtoId: produtoGlobal.codigo, qtd: qtd });
             }
 
             if (incluirInstalacao) {
-                carrinho.push({ nome: "Instalação para " + produtoGlobal.nome, preco: 200.00, qtd: qtd });
+                carrinho.push({ nome: "Instalação para " + produtoGlobal.nome, preco: 800.00, qtd: qtd });
             }
 
-            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            localStorage.setItem(storageKey, JSON.stringify(carrinho));
             document.getElementById('msg').innerText = `Adicionado ${qtd} ao carrinho!${incluirInstalacao ? " Com instalação." : ""}`;
             qtdInput.value = '';
             document.getElementById('incluirInstalacao').checked = false;
             window.dispatchEvent(new Event("storage"));
         };
-
-        document.querySelector('.carrinho-link').onclick = function(e) {
-            if (!isLoggedIn) {
-                e.preventDefault();
-                if (confirm("Você precisa estar logado para acessar o carrinho. Deseja fazer login?")) {
-                    window.location.href = 'login.html';
-                }
-            }
-        };
+        
     </script>
 </body>
 </html>

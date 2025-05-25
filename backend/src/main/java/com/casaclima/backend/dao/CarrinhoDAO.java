@@ -16,7 +16,6 @@ public class CarrinhoDAO {
         this.db = db;
     }
 
-    // Listar itens do carrinho
     public Carrinho getCarrinho(int codCliente) {
         List<ItemDoCarrinho> itens = db.query(
             "SELECT produto_id, quantidade FROM Carrinho WHERE cod_cliente = ?",
@@ -29,7 +28,6 @@ public class CarrinhoDAO {
         return carrinho;
     }
 
-    // Adicionar item ao carrinho
     public void adicionarItem(int codCliente, ItemDoCarrinho item) {
         int count = db.queryForObject(
             "SELECT COUNT(*) FROM Carrinho WHERE cod_cliente = ? AND produto_id = ?",
@@ -49,7 +47,6 @@ public class CarrinhoDAO {
         }
     }
 
-    // Remover item do carrinho
     public void removerItem(int codCliente, ItemDoCarrinho item) {
         db.update(
             "DELETE FROM Carrinho WHERE cod_cliente = ? AND produto_id = ?",
