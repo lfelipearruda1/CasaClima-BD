@@ -8,7 +8,7 @@ public class Produto {
     private double preco;
     private double precoOriginal = 0.0;
     private String marca;
-    private Boolean ativo;
+    private Boolean ativo = true;
     private int quantidade;
     private double desconto;
     private String caminhoImagem;

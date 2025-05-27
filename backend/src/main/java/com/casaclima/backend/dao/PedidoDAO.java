@@ -59,7 +59,7 @@ public class PedidoDAO {
             int transporteId = inserirTransporte(connection);
             pedido.setTransporteId(transporteId);
 
-            String sqlPedido = "INSERT INTO Pedido (data_realizacao, valor_total, status, metodo_pagamento, fk_Cliente_cod_cliente, fk_Transporte_ID_transporte, endereco_rua, endereco_numero, endereco_cidade, endereco_bairro, endereco_cep) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sqlPedido = "INSERT INTO Pedido (data_de_realizacao, valor_total, status, metodo_pagamento, fk_Cliente_cod_cliente, fk_Transporte_ID_transporte, endereco_rua, endereco_numero, endereco_cidade, endereco_bairro, endereco_cep) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement stmtPedido = connection.prepareStatement(sqlPedido, PreparedStatement.RETURN_GENERATED_KEYS)) {
                 if (pedido.getDataDeRealizacao() != null) {
@@ -117,12 +117,18 @@ public class PedidoDAO {
     }
 
     private void inserirInstalacoes(Pedido pedido, Connection connection) throws SQLException {
+        System.out.println("Inserindo instalações para o pedido: " + pedido.getNumero());
+        if (pedido.getInstalacoes() == null || pedido.getInstalacoes().isEmpty()) {
+            System.out.println("Nenhuma instalação para processar.");
+            return;
+        }
         String sqlInst = "INSERT INTO Pedido_Instalacao (fk_Pedido_numero, fk_Instalacao_ID_instalacao, quantidade) VALUES (?, ?, ?)";
         try (PreparedStatement stmtInst = connection.prepareStatement(sqlInst)) {
             for (Instalacao inst : pedido.getInstalacoes()) {
+                System.out.println("Inserindo instalação com ID: " + 4 + " para o pedido: " + pedido.getNumero());
                 stmtInst.setInt(1, pedido.getNumero());
-                stmtInst.setInt(2, inst.getIdInstalacao());
-                stmtInst.setInt(3, 1);
+                stmtInst.setInt(2, 4);
+                stmtInst.setInt(3, inst.getQuantidade());
                 stmtInst.executeUpdate();
             }
         }
@@ -132,10 +138,15 @@ public class PedidoDAO {
         String sqlProd = "INSERT INTO Pedido_Produto (fk_Pedido_numero, fk_Produto_codigo, quantidade) VALUES (?, ?, ?)";
         try (PreparedStatement stmtProd = connection.prepareStatement(sqlProd)) {
             for (Produto prod : pedido.getProdutos()) {
-                stmtProd.setInt(1, pedido.getNumero());
-                stmtProd.setInt(2, prod.getCodigo());
-                stmtProd.setInt(3, prod.getQuantidade());
-                stmtProd.executeUpdate();
+                if (prod.getAtivo() != null && prod.getAtivo() && prod.getCodigo() > 0) {
+                    System.out.println("Inserindo produto com código: " + prod.getCodigo());
+                    stmtProd.setInt(1, pedido.getNumero());
+                    stmtProd.setInt(2, prod.getCodigo());
+                    stmtProd.setInt(3, prod.getQuantidade());
+                    stmtProd.executeUpdate();
+                } else {
+                    System.out.println("Produto inválido ou inativo: Código - " + prod.getCodigo());
+                }
             }
         }
     }
